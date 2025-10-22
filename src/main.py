@@ -1,6 +1,8 @@
 import pygame
 import sys
 
+from src.windows.MainMenu import renderMainMenu
+
 # Initialize Pygame
 pygame.init()
 
@@ -23,19 +25,8 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    # Update game logic here
+    renderMainMenu(screen, clock, WIDTH, HEIGHT)
 
-    # Draw
-    screen.fill(BLACK)
-
-    # Example: display text
-    font = pygame.font.Font(None, 74)
-    text = font.render("Office View", True, (255, 255, 255))
-    screen.blit(text, (WIDTH//2 - text.get_width()//2, HEIGHT//2))
-
-    # Flip the display
-    pygame.display.flip()
-    clock.tick(FPS)
 
 pygame.quit()
 sys.exit()
