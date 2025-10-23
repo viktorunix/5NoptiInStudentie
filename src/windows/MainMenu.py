@@ -8,7 +8,7 @@ def renderMainMenu(screen: Surface, clock: Clock, WIDTH: int, HEIGHT: int):
 
     # Draw
     screen.fill((0,0,0));
-
+    
 
     # Example: display text
     font = pygame.font.Font(None, 74)

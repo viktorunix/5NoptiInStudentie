@@ -1,5 +1,5 @@
 #include <stdlib.h>
 
 int main(void){
-    system("python3 main.py");
+    system("python3 src/main.py");
 }
