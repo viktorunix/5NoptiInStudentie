@@ -6,14 +6,16 @@ from pygame import Surface
 from pygame.time import Clock
 
 from gui import Text
+from gui import Button
 
 
 class MainMenu:
     running = True
+    buttons = []
     def load_assets(self):
-        self.cap= cv2.VideoCapture("/mnt/c/Users/Andrei/PycharmProjects/5NoptiInStudentie/assets/videos/mainmenu.mp4")
+        self.cap= cv2.VideoCapture(self.script_dir +"/assets/videos/mainmenu.mp4")
     def load_audio(self):
-        self.sound = pygame.mixer.Sound("/mnt/c/Users/Andrei/PycharmProjects/5NoptiInStudentie/assets/audio/mainmenu.mp3")
+        self.sound = pygame.mixer.Sound(self.script_dir+ "/assets/audio/mainmenu.mp3")
         self.channel.play(self.sound,-1)
     def loader(self):
         loader_thread = threading.Thread(target =self.load_assets)
@@ -22,21 +24,27 @@ class MainMenu:
         loader_audio_thread = threading.Thread(target = self.load_audio)
         loader_audio_thread.start()
 
-    def __init__(self, WIDTH: int, HEIGHT: int):
+    def __init__(self, WIDTH: int, HEIGHT: int,script_dir):
+        self.script_dir = script_dir
         self.sound = None
         self.WIDTH= WIDTH
         self.HEIGHT =HEIGHT
         self.cap: cv2.VideoCapture = cv2.VideoCapture()
         self.channel = pygame.mixer.find_channel()
         self.another_channel = pygame.mixer.find_channel()
-        self.bugimage = pygame.image.load("/mnt/c/Users/Andrei/PycharmProjects/5NoptiInStudentie/assets/images/mainmenuanimatronic.png").convert_alpha()
+        self.bugimage = pygame.image.load(self.script_dir + "/assets/images/mainmenuanimatronic.png").convert_alpha()
         self.bugimage.set_alpha(180)
         self.bugimage = pygame.transform.scale(self.bugimage,(self.bugimage.get_width()*2, self.bugimage.get_height() * 2))
+        self.buttons.append(Button.Button(200,50,50, 350 + 74 / 2,self.event_test))
+        self.buttons.append(Button.Button(200, 50,50, 450 + 74 / 2,self.event_test_altu))
 
+    def renderButtons(self, screen: Surface):
+        for button in self.buttons:
+            pygame.draw.rect(screen,(255,0,0),(button.get_x(), button.get_y(), button.get_width(), button.get_height()))
     def warningScreen(self, screen: Surface, clock: Clock):
         loaded = False
         self.loader()
-        easter_egg_sound = pygame.mixer.Sound("/mnt/c/Users/Andrei/PycharmProjects/5NoptiInStudentie/assets/audio/easteregg.mp3")
+        easter_egg_sound = pygame.mixer.Sound(self.script_dir + "/assets/audio/easteregg.mp3")
         #another_channel = pygame.mixer.find_channel()
         self.another_channel.play(easter_egg_sound)
         print(self.another_channel.get_busy())
@@ -45,10 +53,10 @@ class MainMenu:
             ret, frame = self.cap.read()
             if ret or not self.another_channel.get_busy():
                 loaded = True
-            #image = pygame.image.load("/mnt/c/Users/Andrei/PycharmProjects/5NoptiInStudentie/assets/images/warningscreen.jpeg")
-            #image = pygame.transform.scale(image, (self.WIDTH, self.HEIGHT))
-            #image.set_alpha(120)
-            #screen.blit(image,(0,0))
+            image = pygame.image.load(self.script_dir +"/assets/images/warningscreen.jpeg")
+            image = pygame.transform.scale(image, (self.WIDTH, self.HEIGHT))
+            image.set_alpha(120)
+            screen.blit(image,(0,0))
             font = pygame.font.Font(None, 74)
             text = font.render("ATENTIE!!", True, (255, 0, 0))
             screen.blit(text, (self.WIDTH / 2 - text.get_width() / 2, self.HEIGHT/2 +50))
@@ -59,11 +67,29 @@ class MainMenu:
             pygame.display.flip()
             clock.tick(60)
 
+    def event_test(self):
+        print("test ca merge")
+    def event_test_altu(self):
+        print("merge si asta")
+    def mouse_click_handler(self, mouse_position: tuple):
+        for button in self.buttons:
+            if mouse_position[0] < button.get_x():
+                continue
+            if mouse_position[0] > button.get_x() + button.get_width():
+                continue
+            if mouse_position[1] < button.get_y():
+                continue
+            if mouse_position[1] > button.get_y() + button.get_height():
+                continue
+            button.trigger()
     def renderMainMenu(self, screen: Surface, clock: Clock):
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if(event.button == 1):
+                        self.mouse_click_handler(event.pos)
             ret, frame = self.cap.read()
             if not ret:
                 self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
@@ -72,7 +98,6 @@ class MainMenu:
             frame = pygame.surfarray.make_surface(frame.swapaxes(0,1))
             screen.blit(frame,(0,0))
             font = pygame.font.Font(None, 74)
-
             Text.renderText(screen, font, "Cinci ", (255, 255, 255), (50, 50))
             Text.renderText(screen, font, "Nopti", (255, 255, 255), (50, 80 + 74/2))
             Text.renderText(screen, font, "In", (255, 255, 255), (50, 110 + 74))
@@ -82,5 +107,8 @@ class MainMenu:
             Text.renderText(screen, font, "Continue", (255,255,255), (50, 450 + 74 / 2))
 
             screen.blit(self.bugimage,(700, -200))
+
+            Text.renderText(screen, font, "V0.1indev", (255, 255, 255), (1030, 680))
+            self.renderButtons(screen)
             pygame.display.flip()
             clock.tick(60)
