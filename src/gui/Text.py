@@ -6,3 +6,4 @@ def renderText(screen: pygame.Surface, font: pygame.font.Font, text: str, color:
     text = font.render(text, True, color)
     text.set_alpha(180)
     screen.blit(text, dest)
+

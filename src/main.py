@@ -1,6 +1,8 @@
 
 import pygame
 import sys
+
+from windows.MainGame import MainGame
 from windows.MainMenu import  MainMenu
 import os
 def main():
@@ -29,6 +31,8 @@ def main():
 
     menu.warningScreen(screen, clock)
     menu.renderMainMenu(screen,clock)
+    #main_game = MainGame(WIDTH, HEIGHT)
+    #main_game.loadingScreen(screen, clock)
     pygame.quit()
     sys.exit()
 
