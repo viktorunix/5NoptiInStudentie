@@ -83,15 +83,15 @@ class MainMenu:
             image.set_alpha(120)
             screen.blit(image, (0, 0))
             font = pygame.font.Font(None, 74)
-            text = font.render("ATENTIE!!", True, (255, 0, 0))
+            text = font.render("ATENTIE!!", True, pygame.Color("red"))
             screen.blit(
                 text, (self.WIDTH / 2 - text.get_width() / 2, self.HEIGHT / 2 + 50)
             )
-            text = font.render("URMEAZA IMAGINI CU IMPACT EMOTIONAL", True, (255, 0, 0))
+            text = font.render("URMEAZA IMAGINI CU IMPACT EMOTIONAL", True, pygame.Color("red"))
             screen.blit(
                 text, (self.WIDTH / 2 - text.get_width() / 2, self.HEIGHT / 2 + 100)
             )
-            text = font.render("bazat pe o poveste reala", True, (255, 0, 0))
+            text = font.render("bazat pe o poveste reala", True, pygame.Color("red"))
             screen.blit(
                 text, (self.WIDTH / 2 - text.get_width() / 2, self.HEIGHT / 2 + 150)
             )
@@ -109,8 +109,6 @@ class MainMenu:
 
     def renderMainMenu(self, screen: Surface, clock: Clock):
         while self.running:
-
-            print(self.another_channel.get_busy())
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
@@ -135,7 +133,7 @@ class MainMenu:
 
             screen.blit(self.bugimage, (700, -200))
 
-            Text.renderText(screen, font, "V0.1indev", pygame.Color("white"), (1030, 680))
+            Text.renderTextCenter(screen, font, "V0.1indev", pygame.Color("white"), (1030, 680))
             #self.renderButtons(screen)
             pygame.display.flip()
             clock.tick(60)

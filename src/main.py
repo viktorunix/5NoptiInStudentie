@@ -5,6 +5,9 @@ import sys
 from windows.MainGame import MainGame
 from windows.MainMenu import  MainMenu
 import os
+import warnings
+warnings.simplefilter("always", DeprecationWarning)
+
 def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     script_dir = script_dir[:-4]
@@ -29,7 +32,7 @@ def main():
     menu = MainMenu(WIDTH, HEIGHT, script_dir)
     menu.loader()
 
-    menu.warningScreen(screen, clock)
+    #menu.warningScreen(screen, clock)
     menu.renderMainMenu(screen,clock)
     #main_game = MainGame(WIDTH, HEIGHT)
     #main_game.loadingScreen(screen, clock)
