@@ -32,7 +32,7 @@ def main():
     menu = MainMenu(WIDTH, HEIGHT, script_dir)
     menu.loader()
 
-    #menu.warningScreen(screen, clock)
+    menu.warningScreen(screen, clock)
     menu.renderMainMenu(screen,clock)
     #main_game = MainGame(WIDTH, HEIGHT)
     #main_game.loadingScreen(screen, clock)
