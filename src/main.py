@@ -5,6 +5,9 @@ import sys
 from windows.MainGame import MainGame
 from windows.MainMenu import  MainMenu
 import os
+import warnings
+warnings.simplefilter("always", DeprecationWarning)
+
 def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     script_dir = script_dir[:-4]

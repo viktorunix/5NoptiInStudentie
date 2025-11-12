@@ -71,6 +71,7 @@ class MainMenu:
         )
         # another_channel = pygame.mixer.find_channel()
         self.another_channel.play(easter_egg_sound)
+        text = Text.Text(screen, None, 74)
         while not loaded:
             #print(self.another_channel.get_busy())
             ret, frame = self.cap.read()
@@ -83,18 +84,9 @@ class MainMenu:
             image.set_alpha(120)
             screen.blit(image, (0, 0))
             font = pygame.font.Font(None, 74)
-            text = font.render("ATENTIE!!", True, (255, 0, 0))
-            screen.blit(
-                text, (self.WIDTH / 2 - text.get_width() / 2, self.HEIGHT / 2 + 50)
-            )
-            text = font.render("URMEAZA IMAGINI CU IMPACT EMOTIONAL", True, (255, 0, 0))
-            screen.blit(
-                text, (self.WIDTH / 2 - text.get_width() / 2, self.HEIGHT / 2 + 100)
-            )
-            text = font.render("bazat pe o poveste reala", True, (255, 0, 0))
-            screen.blit(
-                text, (self.WIDTH / 2 - text.get_width() / 2, self.HEIGHT / 2 + 150)
-            )
+            text.renderText("ATENTIE!!", "red", (self.WIDTH / 2, self.HEIGHT / 2 + 50), True)
+            text.renderText("URMEAZA IMAGINI CU IMPACT EMOTIONAL", "red", (self.WIDTH / 2, self.HEIGHT / 2 + 100), True)
+            text.renderText("bazat pe o poveste reala", "red", (self.WIDTH / 2, self.HEIGHT / 2 + 150), True)
             pygame.display.flip()
             clock.tick(60)
 
@@ -108,9 +100,8 @@ class MainMenu:
 
 
     def renderMainMenu(self, screen: Surface, clock: Clock):
+        text = Text.Text(screen, None,74)
         while self.running:
-
-            print(self.another_channel.get_busy())
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
@@ -125,17 +116,18 @@ class MainMenu:
             frame = pygame.surfarray.make_surface(frame.swapaxes(0, 1))
             screen.blit(frame, (0, 0))
             font = pygame.font.Font(None, 74)
-            Text.renderText(screen, font, "Cinci ", pygame.Color("white"), (50, 50))
-            Text.renderText(screen, font, "Nopti", pygame.Color("white"), (50, 80 + 74 / 2))
-            Text.renderText(screen, font, "In", pygame.Color("white"), (50, 110 + 74))
-            Text.renderText(screen, font, "Studentie", pygame.Color("white"), (50, 140 + 74 * 1.5))
+            text.renderText("Cinci", "white", (50,50))
+            text.renderText("Nopti", "white", (50, 80 + 74 / 2))
+            text.renderText("In", "white", (50, 110 + 74 / 2))
+            text.renderText("Studentie", "white", (50, 140 + 74 / 2))
 
-            Text.renderText(screen, font, "New Game", pygame.Color("white"), (50, 350 + 74 / 2))
-            Text.renderText(screen, font, "Continue", pygame.Color("white"), (50, 450 + 74 / 2))
+            text.renderText("New Game", "white", (50, 350 + 74 / 2))
+            text.renderText("Continue", "white", (50, 450 + 74 / 2))
 
             screen.blit(self.bugimage, (700, -200))
 
-            Text.renderText(screen, font, "V0.1indev", pygame.Color("white"), (1030, 680))
+            #Text.renderTextCenter(screen, font, "V0.1indev", pygame.Color("white"), (1030, 680))
+            text.renderText( "V0.1indev", pygame.Color("white"), (1030, 680))
             #self.renderButtons(screen)
             pygame.display.flip()
             clock.tick(60)
