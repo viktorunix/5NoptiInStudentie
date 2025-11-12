@@ -108,6 +108,7 @@ class MainMenu:
 
 
     def renderMainMenu(self, screen: Surface, clock: Clock):
+        text = Text.Text(screen, None,74)
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -133,7 +134,8 @@ class MainMenu:
 
             screen.blit(self.bugimage, (700, -200))
 
-            Text.renderTextCenter(screen, font, "V0.1indev", pygame.Color("white"), (1030, 680))
+            #Text.renderTextCenter(screen, font, "V0.1indev", pygame.Color("white"), (1030, 680))
+            text.renderText( "V0.1indev", pygame.Color("white"), (1030, 680))
             #self.renderButtons(screen)
             pygame.display.flip()
             clock.tick(60)
