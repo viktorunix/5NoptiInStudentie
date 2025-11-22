@@ -66,6 +66,7 @@ class MainMenu:
     def warningScreen(self, screen: Surface, clock: Clock):
         loaded = False
         self.loader()
+        #TOOO: fix bug regarding the sounds not playing
         easter_egg_sound = pygame.mixer.Sound(
             self.script_dir + "/assets/audio/easteregg.mp3"
         )
@@ -84,9 +85,13 @@ class MainMenu:
             image.set_alpha(120)
             screen.blit(image, (0, 0))
             font = pygame.font.Font(None, 74)
+            #TODO: maybe rewriting this since im doing this in a train and people might see this beautiful game
+
             text.renderText("ATENTIE!!", "red", (self.WIDTH / 2, self.HEIGHT / 2 + 50), True)
-            text.renderText("URMEAZA IMAGINI CU IMPACT EMOTIONAL", "red", (self.WIDTH / 2, self.HEIGHT / 2 + 100), True)
-            text.renderText("bazat pe o poveste reala", "red", (self.WIDTH / 2, self.HEIGHT / 2 + 150), True)
+            text.renderText("Acest joc reprezinta o parodie si trebuie tratat ca atare", "red", (self.WIDTH / 2, self.HEIGHT / 2 + 100), True)
+            text.renderText("Pot urma imagini cu impact emotional sau care pot afecta persoane cu epilepsie", "red", (self.WIDTH / 2, self.HEIGHT / 2 + 150), True)
+            text.renderText("Prin apasarea tastei enter sunteti de acord cu cele de mai sus", "red", (self.WIDTH / 2, self.HEIGHT / 2 + 200), True)
+            # TODO: add a button for accepting the conditions
             pygame.display.flip()
             clock.tick(60)
 
