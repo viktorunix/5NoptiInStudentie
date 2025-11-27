@@ -1,6 +1,6 @@
 import pygame
 
-from src.utils.Deprecated import deprecated
+from utils.Deprecated import deprecated
 
 class Text:
     font: pygame.font.Font
@@ -8,7 +8,7 @@ class Text:
     def __init__(self, screen: pygame.Surface, fontPath:str=None, fontSize:int=74):
         self.screen = screen
         self.font = pygame.font.Font(fontPath, fontSize)
-
+        self.fontSize = fontSize
     def renderText(self, text: str, color, dest:tuple, center=False):
         if(type(color) == str):
             color = pygame.Color(color)
@@ -20,7 +20,8 @@ class Text:
             self.screen.blit(text, textRect.topleft)
         else:
             self.screen.blit(text, dest)
-
+    def getSize(self):
+        return self.fontSize
 @deprecated
 def renderText(screen: pygame.Surface, font: pygame.font.Font, text: str, color: pygame.Color, dest: tuple[float, float]):
     text = font.render(text, True, color)
