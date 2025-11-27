@@ -7,7 +7,6 @@ from pygame.time import Clock
 
 from gui import Text
 
-# from gui import Button
 from gui.Button import Button
 
 from windows.MainGame import MainGame
@@ -20,16 +19,8 @@ class MainMenu:
     def load_assets(self):
         self.cap = cv2.VideoCapture(self.script_dir + "/assets/videos/mainmenu.mp4")
 
-    def load_audio(self):
-        self.channel.play(self.sound, -1)
-
     def loader(self):
-        #loader_thread = threading.Thread(target=self.load_assets)
-        #loader_thread.start()
         self.load_assets()
-        # self.load_assets()
-        #loader_audio_thread = threading.Thread(target=self.load_audio)
-        #loader_audio_thread.start()
 
     def __init__(self, WIDTH: int, HEIGHT: int, script_dir):
         self.script_dir = script_dir
@@ -93,7 +84,6 @@ class MainMenu:
                 font = pygame.font.Font(None, 30)
             except Exception as e:
                 print("Warning screen background image not found a black screen will be shown as background")
-            #TODO: maybe rewriting this since im doing this in a train and people might see this beautiful game
             text.renderText("ATENTIE!!", "red", (self.WIDTH / 2, self.HEIGHT / 2 -200), True)
             text.renderText("Acest joc este o parodie si trebuie tratat ca atare","white", (self.WIDTH / 2, self.HEIGHT / 2 - 50), True)
             text.renderText("Urmeaza imagini care pot afecta emotional","white", (self.WIDTH/ 2, self.HEIGHT / 2 ), True)
@@ -103,7 +93,7 @@ class MainMenu:
             clock.tick(60)
 
     def event_test(self, screen: Surface, clock: Clock):
-        mainGame = MainGame(self.WIDTH, self.HEIGHT)
+        mainGame = MainGame(self.WIDTH, self.HEIGHT, self.script_dir)
         mainGame.loadingScreen(screen, clock)
 
     def event_test_altu(self):
@@ -130,16 +120,15 @@ class MainMenu:
             screen.blit(frame, (0, 0))
             font = pygame.font.Font(None, 74)
             text.renderText("Cinci", "white", (50,50))
-            text.renderText("Nopti", "white", (50, 80 + 74 / 2))
-            text.renderText("In", "white", (50, 110 + 74 / 2))
-            text.renderText("Studentie", "white", (50, 140 + 74 / 2))
+            text.renderText("Nopti", "white", (50,100))
+            text.renderText("In", "white", (50, 150))
+            text.renderText("Studentie", "white", (50, 200))
 
             text.renderText("New Game", "white", (50, 350 + 74 / 2))
             text.renderText("Continue", "white", (50, 450 + 74 / 2))
 
             screen.blit(self.bugimage, (700, -200))
 
-            #Text.renderTextCenter(screen, font, "V0.1indev", pygame.Color("white"), (1030, 680))
             text.renderText( "V0.1indev", pygame.Color("white"), (1030, 680))
             #self.renderButtons(screen)
             pygame.display.flip()
