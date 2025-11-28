@@ -31,6 +31,10 @@ class MainGame:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                    running = False
+                   pygame.quit()
+                   exit()
+                elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    self.office.camera_button.mouse_click_handler(event.pos, screen)
             print("am ajuns aici")
             self.office.render_office(screen)
             pygame.display.flip()

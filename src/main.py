@@ -6,9 +6,11 @@ from windows.MainGame import MainGame
 from windows.MainMenu import  MainMenu
 import os
 import warnings
+from gui.OfficeButton import OfficeButton
 warnings.simplefilter("always", DeprecationWarning)
 
 def main():
+    button: OfficeButton = OfficeButton(2,2,2,2,2, main)
     script_dir = os.path.dirname(os.path.abspath(__file__))
     script_dir = script_dir[:-4]
     print("this file is in:", script_dir)

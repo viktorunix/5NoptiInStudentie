@@ -1,5 +1,5 @@
 import pygame
-
+from gui.OfficeButton import OfficeButton
 class Office:
 
     def __init__(self, WIDTH, HEIGHT, script_dir: str):
@@ -13,7 +13,8 @@ class Office:
         self.height = HEIGHT
         self.camera_x = 0
         self.scroll_speed = 5
-        
+        #TODO: SCHIMBA NAIBI LINIA ASTA CA E LA MISTO
+        self.camera_button = OfficeButton(140, 300, 300, 100, 100, self.render_office)
         run = True
         clock = pygame.time.Clock()
 
@@ -29,3 +30,4 @@ class Office:
 
         view_rect = pygame.Rect(self.camera_x, 0, self.width, self.height)
         screen.blit(self.office, (0,0), view_rect)
+        self.camera_button.render_button(screen)
