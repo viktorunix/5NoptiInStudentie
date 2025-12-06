@@ -26,12 +26,9 @@ class MainGame:
             clock.tick(60)
         self.main_game(screen)
     def main_game(self,screen: pygame.Surface):
-        running = True
-        is_office = True
-        is_office_front = True
-        is_camera = False
-        is_computer = False
-
+        running: bool = True
+        is_office: bool = True
+        is_office_front: bool = True
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -39,11 +36,14 @@ class MainGame:
                    pygame.quit()
                    exit()
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                    if is_office and is_office_front:
-                        self.office.camera_button.mouse_click_handler(event.pos)
-                        if(self.office.camera_x == 0):
-                            self.office.back_office_button.mouse_click_handler(event.pos)
-                        print(str(self.office.camera_button.getState()))
-            if is_office and is_office_front:
-                self.office.render_office(screen)
+                    is_office = self.office.get_camera_button().get_state()
+                    is_office_front = self.office.get_back_office_button().get_state()
+                    #if is_office and is_office_front:
+                    self.office.get_camera_button().mouse_click_handler(event.pos)
+                    self.office.get_laptop_button().mouse_click_handler(event.pos)
+                    if(self.office.camera_x == 0):
+                        self.office.get_back_office_button().mouse_click_handler(event.pos)
+                    #print(str(self.office.get_camera_button().get_state()))
+            #if is_office and is_office_front:
+            self.office.render_office(screen)
             pygame.display.flip()

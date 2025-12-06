@@ -3,7 +3,7 @@ import pygame
 
 
 class Button:
-    def __init__(self, width: int, height: int, x: int, y: int, target: Callable):
+    def __init__(self, width: int, height: int, x: int, y: int, target: Callable = None):
         self._width = width
         self._height = height
         self._x = x
@@ -48,4 +48,5 @@ class Button:
             return
         if mouse_position[1] > self.get_y() + self.get_height():
             return
-        self.trigger(screen, clock)
+        if self._target:
+            self.trigger(screen, clock)
