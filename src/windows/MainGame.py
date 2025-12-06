@@ -27,6 +27,11 @@ class MainGame:
         self.main_game(screen)
     def main_game(self,screen: pygame.Surface):
         running = True
+        is_office = True
+        is_office_front = True
+        is_camera = False
+        is_computer = False
+
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -34,7 +39,11 @@ class MainGame:
                    pygame.quit()
                    exit()
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                    self.office.camera_button.mouse_click_handler(event.pos, screen)
-            print("am ajuns aici")
-            self.office.render_office(screen)
+                    if is_office and is_office_front:
+                        self.office.camera_button.mouse_click_handler(event.pos)
+                        if(self.office.camera_x == 0):
+                            self.office.back_office_button.mouse_click_handler(event.pos)
+                        print(str(self.office.camera_button.getState()))
+            if is_office and is_office_front:
+                self.office.render_office(screen)
             pygame.display.flip()
