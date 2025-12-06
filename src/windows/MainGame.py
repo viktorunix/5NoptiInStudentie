@@ -10,7 +10,7 @@ class MainGame:
         self.HEIGHT = HEIGHT
         self.loaded_state: dict = {}
         self.script_dir = script_dir;
-        self.office = Office(self.WIDTH, self.HEIGHT, self.script_dir)
+        self.office = Office((self.WIDTH, self.HEIGHT), self.script_dir)
     def loadingScreen(self, screen: pygame.Surface, clock: pygame.time.Clock):
         loaded = False
         font = pygame.font.Font(None, 74)
