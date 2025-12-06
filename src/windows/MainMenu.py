@@ -68,6 +68,9 @@ class MainMenu:
         is_enter:bool = False
         while not loaded:
             for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
                         is_enter = True
@@ -93,6 +96,7 @@ class MainMenu:
             clock.tick(60)
 
     def event_test(self, screen: Surface, clock: Clock):
+        self.channel.stop()
         mainGame = MainGame(self.WIDTH, self.HEIGHT, self.script_dir)
         mainGame.loadingScreen(screen, clock)
 
