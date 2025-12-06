@@ -100,7 +100,7 @@ class MainMenu:
         mainGame = MainGame(self.WIDTH, self.HEIGHT, self.script_dir)
         mainGame.loadingScreen(screen, clock)
 
-    def event_test_altu(self):
+    def event_test_altu(self, screen, clock):
         print("merge si asta")
 
 
