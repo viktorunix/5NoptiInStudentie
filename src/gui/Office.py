@@ -57,16 +57,11 @@ class Office:
 
         view_rect = pygame.Rect(self.camera_x, 0, self.__width, self.__height)
         screen.blit(self.office, (0,0), view_rect)
-        if game_state == GameState.OFFICE_FRONT_LIGHTS:
+        if game_state is GameState.OFFICE_FRONT_LIGHTS or game_state is GameState.OFFICE_FRONT_DARK:
             self.__camera_button.render_button(screen)
             self.__laptop_button.render_button(screen)
             if self.camera_x == 0:
                 self.__back_office_button.render_button(screen)
-        if game_state == GameState.OFFICE_BACK_LIGHTS:
+        if game_state is GameState.OFFICE_BACK_LIGHTS or game_state is GameState.OFFICE_BACK_DARK:
             self.__front_office_button.render_button(screen)
-        #self.__camera_button.render_button(screen)
-        #self.__laptop_button.render_button(screen)
-        #if self.camera_x == 0 and not self.__front_office_button.get_state():
-        #    self.__back_office_button.render_button(screen)
-        #if not self.__front_office_button.get_state():
-        #    self.__front_office_button.render_button(screen)
+
