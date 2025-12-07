@@ -1,7 +1,9 @@
 import pygame
 from gui.OfficeButton import OfficeButton
+from utils.GameState import GameState
 class Office:
     def __init__(self, screen_dimension: tuple, script_dir: str):
+
         self.__width = screen_dimension[0]
         self.__height = screen_dimension[1]
         self.__script_dir = script_dir
@@ -16,8 +18,13 @@ class Office:
         self.__camera_button = OfficeButton(pygame.Color("red"), self.__width - 600, self.__height - 120, 500, 100)
         self.__back_office_button = OfficeButton(pygame.Color("red"), 50, self.__height - 700, 100, 500)
         self.__laptop_button = OfficeButton(pygame.Color("red"), self.__width - 1200, self.__height - 120, 500, 100)
+        self.__front_office_button = OfficeButton(pygame.Color("red"), self.__width - 150, self.__height - 700, 100, 500)
+        self.__front_office_button.change_state()
         run = True
         clock = pygame.time.Clock()
+
+        self.front_office_lights_background = pygame.image.load(script_dir + "/assets/images/office_front_lights.jpeg")
+        self.back_office_lights_background = pygame.image.load(script_dir + "/assets/images/office_back_lights.jpg")
     def test(self, screen, clock):
         print("mergeeee")
 
@@ -28,8 +35,13 @@ class Office:
         return self.__back_office_button
     def get_laptop_button(self) -> OfficeButton:
         return self.__laptop_button
+    def get_front_office_button(self) -> OfficeButton:
+        return self.__front_office_button
 
-    def render_office(self,screen):
+    def change_image(self, image: pygame.image):
+        self.office = image
+
+    def render_office(self,screen, game_state):
         mouse_pos = pygame.mouse.get_pos()
         if(mouse_pos[0] < 100):
             self.camera_x -= self.scroll_speed
@@ -45,7 +57,16 @@ class Office:
 
         view_rect = pygame.Rect(self.camera_x, 0, self.__width, self.__height)
         screen.blit(self.office, (0,0), view_rect)
-        self.__camera_button.render_button(screen)
-        self.__laptop_button.render_button(screen)
-        if(self.camera_x == 0):
-            self.__back_office_button.render_button(screen)
+        if game_state == GameState.OFFICE_FRONT_LIGHTS:
+            self.__camera_button.render_button(screen)
+            self.__laptop_button.render_button(screen)
+            if self.camera_x == 0:
+                self.__back_office_button.render_button(screen)
+        if game_state == GameState.OFFICE_BACK_LIGHTS:
+            self.__front_office_button.render_button(screen)
+        #self.__camera_button.render_button(screen)
+        #self.__laptop_button.render_button(screen)
+        #if self.camera_x == 0 and not self.__front_office_button.get_state():
+        #    self.__back_office_button.render_button(screen)
+        #if not self.__front_office_button.get_state():
+        #    self.__front_office_button.render_button(screen)
