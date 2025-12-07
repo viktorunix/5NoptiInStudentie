@@ -63,5 +63,6 @@ class Office:
             if self.camera_x == 0:
                 self.__back_office_button.render_button(screen)
         if game_state is GameState.OFFICE_BACK_LIGHTS or game_state is GameState.OFFICE_BACK_DARK:
-            self.__front_office_button.render_button(screen)
+            if self.camera_x == self.office_width - self.__width:
+                self.__front_office_button.render_button(screen)
 
