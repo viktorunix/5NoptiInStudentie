@@ -1,6 +1,7 @@
 from enum import Enum, auto
 
 class CameraState(Enum):
+    NONE = auto()
     MAIN_HALLWAY_A = auto()
     MAIN_HALLWAY_A_BUG = auto()
     MAIN_HALLWAY_B = auto()

@@ -4,7 +4,7 @@ from typing import Callable
 class OfficeButton(Button):
 
     def __init__(self, background: pygame.Color, x, y, width, height, target: Callable=None):
-        super().__init__(width, height, x, y, target)
+        super().__init__((width, height),(x, y), target)
         #self.__image = pygame.image.load("da")
         self.__background = background
         self.__rect = pygame.Rect(x, y, width, height)

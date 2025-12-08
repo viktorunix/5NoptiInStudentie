@@ -38,8 +38,9 @@ class MainMenu:
             self.bugimage,
             (self.bugimage.get_width() * 2, self.bugimage.get_height() * 2),
         )
-        self.buttons.append(Button(250, 50, 50, 350 + 74 / 2, self.event_test))
-        self.buttons.append(Button(200, 50, 50, 450 + 74 / 2, self.event_test_altu))
+
+        self.buttons.append(Button((250, 50), (50, 350 + 74 / 2), self.event_test))
+        self.buttons.append(Button((200, 50), (50, 450 + 74 / 2), self.event_test_altu))
 
         self.sound = pygame.mixer.Sound(self.script_dir + "/assets/audio/mainmenu.mp3")
     def renderButtons(self, screen: Surface):
@@ -86,7 +87,7 @@ class MainMenu:
                 screen.blit(image, (0, 0))
                 font = pygame.font.Font(None, 30)
             except Exception as e:
-                print("Warning screen background image not found a black screen will be shown as background")
+                print("Warning screen background image not found")
             text.renderText("ATENTIE!!", "red", (self.WIDTH / 2, self.HEIGHT / 2 -200), True)
             text.renderText("Acest joc este o parodie si trebuie tratat ca atare","white", (self.WIDTH / 2, self.HEIGHT / 2 - 50), True)
             text.renderText("Urmeaza imagini care pot afecta emotional","white", (self.WIDTH/ 2, self.HEIGHT / 2 ), True)
