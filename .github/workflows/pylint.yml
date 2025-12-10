@@ -20,4 +20,4 @@ jobs:
         pip install pylint
     - name: Analysing the code with pylint
       run: |
-        pylint $(git ls-files '*.py') --disable=import-error,import-outside-toplevel,missing-function-docstring,missing-module-docstring,no-member --fail-under=5.0
+        pylint $(git ls-files '*.py') --disable=import-error,import-outside-toplevel,missing-function-docstring,missing-module-docstring,no-member --fail-under=8.0

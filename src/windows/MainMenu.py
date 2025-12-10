@@ -76,7 +76,7 @@ class MainMenu:
                     if event.key == pygame.K_RETURN:
                         is_enter = True
             ret, frame = self.cap.read()
-            if ret and not self.another_channel.get_busy() and is_enter :
+            if is_enter :
                 loaded = True
             try:
                 image = pygame.image.load(
