@@ -3,11 +3,11 @@ import pygame
 
 
 class Button:
-    def __init__(self, width: int, height: int, x: int, y: int, target: Callable = None):
-        self._width = width
-        self._height = height
-        self._x = x
-        self._y = y
+    def __init__(self, screen_dimensions: tuple, position: tuple, target: Callable = None):
+        self._width = screen_dimensions[0]
+        self._height = screen_dimensions[1]
+        self._x = position[0]
+        self._y = position[1]
         self._target = target
 
     def get_width(self):
@@ -39,7 +39,8 @@ class Button:
 
     def trigger(self, screen: pygame.Surface, clock: pygame.time.Clock):
         self._target(screen, clock)
-    def mouse_click_handler(self, mouse_position: tuple, screen: pygame.Surface, clock: pygame.time.Clock = None):
+    def mouse_click_handler(self, mouse_position: tuple,
+    screen: pygame.Surface, clock: pygame.time.Clock = None):
         if mouse_position[0] < self.get_x():
             return
         if mouse_position[0] > self.get_x() + self.get_width():

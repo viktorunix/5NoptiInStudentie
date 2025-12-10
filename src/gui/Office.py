@@ -43,9 +43,9 @@ class Office:
 
     def render_office(self,screen, game_state):
         mouse_pos = pygame.mouse.get_pos()
-        if(mouse_pos[0] < 100):
+        if mouse_pos[0] < 100:
             self.camera_x -= self.scroll_speed
-        if(mouse_pos[0] > self.__width - 100):
+        if mouse_pos[0] > self.__width - 100 :
             self.camera_x += self.scroll_speed
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:
