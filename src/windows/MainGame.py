@@ -15,6 +15,7 @@ class MainGame:
         self.script_dir = script_dir;
         self.office = Office((self.WIDTH, self.HEIGHT), self.script_dir)
         self.camera = Camera((self.WIDTH, self.HEIGHT), self.script_dir)
+        self.ticks = 0
     def loadingScreen(self, screen: pygame.Surface, clock: pygame.time.Clock):
         loaded = False
         font = pygame.font.Font(None, 74)
@@ -23,11 +24,15 @@ class MainGame:
         while not loaded:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    loaded = True
+                    pygame.quit()
+                    exit()
+            if self.ticks == 60 * 3:
+                loaded = True
             screen.fill((0, 0, 0))
             text.renderText("Night " + str(self.loaded_state["night"]), "white", (self.WIDTH / 2, self.HEIGHT / 2/2), True)
             pygame.display.flip()
             clock.tick(60)
+            self.ticks+=1
         self.main_game(screen)
     def main_game(self,screen: pygame.Surface):
         game_state = GameState.OFFICE_FRONT_LIGHTS
