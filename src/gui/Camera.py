@@ -18,6 +18,24 @@ class Camera:
         self.__main_hallway_b_button = OfficeButton(pygame.Color("red"), self.__width - 700, self.__height - 300, 80, 80)
         self.__staircase_button = OfficeButton(pygame.Color("red"), self.__width - 600, self.__height - 300, 80, 80)
 
+        self.staircase_background = pygame.image.load(script_dir + "/assets/images/staircase.jpg")
+        scale_factor = self.__height / self.staircase_background.get_height()
+        new_width = int(self.staircase_background.get_width() * scale_factor)
+        self.staircase_background = pygame.transform.scale(self.staircase_background, (new_width * 1.50, new_width))
+        self.main_hallway_a_background = pygame.image.load(script_dir + "/assets/images/main_hallway_a.jpg")
+        scale_factor = self.__height / self.main_hallway_a_background.get_height()
+        new_width = int(self.main_hallway_a_background.get_width() * scale_factor)
+        self.main_hallway_a_background = pygame.transform.scale(self.main_hallway_a_background, (new_width * 1.50, new_width))
+
+        self.main_hallway_b_background = pygame.image.load(script_dir + "/assets/images/main_hallway_b.jpg")
+        scale_factor = self.__height / self.main_hallway_b_background.get_height()
+        new_width = int(self.main_hallway_b_background.get_width() * scale_factor)
+        self.main_hallway_b_background = pygame.transform.scale(self.main_hallway_b_background, (new_width * 1.50, new_width))
+
+        self.bath_hallway_background = pygame.image.load(script_dir + "/assets/images/bath_hallway.jpg")
+        scale_factor = self.__height / self.bath_hallway_background.get_height()
+        new_width = int(self.bath_hallway_background.get_width() * scale_factor)
+        self.bath_hallway_background = pygame.transform.scale(self.bath_hallway_background, (new_width * 1.50, new_width))
     def change_image(self, image: pygame.image):
         self.camera = image
 

@@ -54,6 +54,14 @@ class MainGame:
                         if self.camera.get_office_button().mouse_click_handler(event.pos):
                             print(str(camera_state))
                             camera_state = CameraState.NONE
+                        if self.camera.get_main_hallway_a_button().mouse_click_handler(event.pos):
+                            camera_state = CameraState.MAIN_HALLWAY_A
+                        if self.camera.get_main_hallway_b_button().mouse_click_handler(event.pos):
+                            camera_state = CameraState.MAIN_HALLWAY_B
+                        if self.camera.get_bath_hallway_button().mouse_click_handler(event.pos):
+                            camera_state = CameraState.BATHROOM_HALLWAY
+                        if self.camera.get_staircase_button().mouse_click_handler(event.pos):
+                            camera_state = CameraState.STAIRWAY
                     else:
                         if game_state is GameState.OFFICE_FRONT_LIGHTS:
                             if self.office.get_camera_button().mouse_click_handler(event.pos):
@@ -78,4 +86,12 @@ class MainGame:
                 self.office.render_office(screen, game_state)
             else:
                 self.camera.render_camera(screen, camera_state)
+            if camera_state is CameraState.STAIRWAY:
+                self.camera.change_image(self.camera.staircase_background)
+            if camera_state is CameraState.MAIN_HALLWAY_A:
+                self.camera.change_image(self.camera.main_hallway_a_background)
+            if camera_state is CameraState.MAIN_HALLWAY_B:
+                self.camera.change_image(self.camera.main_hallway_b_background)
+            if camera_state is CameraState.BATHROOM_HALLWAY:
+                self.camera.change_image(self.camera.bath_hallway_background)
             pygame.display.flip()
