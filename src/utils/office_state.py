@@ -1,6 +1,6 @@
 from enum import Enum, auto
 
-class GameState(Enum):
+class office_state(Enum):
 
     #TODO: add more states
     OFFICE_FRONT_LIGHTS = auto()
