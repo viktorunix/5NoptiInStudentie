@@ -1,5 +1,5 @@
 import pygame
-from utils.CameraState import CameraState
+from utils.camera_state import camera_state
 from gui.OfficeButton import OfficeButton
 class Camera:
     """Class for rendering and defining each UI component for the camera surveillance mechanic"""
