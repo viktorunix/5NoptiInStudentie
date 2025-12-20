@@ -1,6 +1,7 @@
 import pygame
 
 from gui.OfficeButton import OfficeButton
+from gui.Picture import image
 from utils.office_state import office_state
 
 
@@ -35,18 +36,25 @@ class Office:
         self.__front_office_button.change_state()
         run = True
         clock = pygame.time.Clock()
-
-        self.front_office_lights_background = pygame.image.load(
-            script_dir + "/assets/images/office_front_lights.jpeg"
+        self.front_office_lights_background = image(
+            script_dir + "/assets/images/office_front_lights.jpeg", screen_dimension, 1
         )
-        scale_factor = self.__height / self.front_office_lights_background.get_height()
-        new_width = int(self.front_office_lights_background.get_width() * scale_factor)
-        print(str(scale_factor) + " " + str(new_width))
-        self.front_office_lights_background = pygame.transform.scale(
-            self.front_office_lights_background, (new_width, self.__height)
-        )
-        self.back_office_lights_background = pygame.image.load(
-            script_dir + "/assets/images/office_back_lights.jpg"
+        # print(str(self.front_office_lights_background.get_image().get_width()))
+        print(screen_dimension)
+        # self.front_office_lights_background = pygame.image.load(
+        #    script_dir + "/assets/images/office_front_lights.jpeg"
+        # )
+        # scale_factor = self.__height / self.front_office_lights_background.get_height()
+        # new_width = int(self.front_office_lights_background.get_width() * scale_factor)
+        # print(str(scale_factor) + " " + str(new_width))
+        # self.front_office_lights_background = pygame.transform.scale(
+        #    self.front_office_lights_background, (new_width, self.__height)
+        # )
+        # self.back_office_lights_background = pygame.image.load(
+        #    script_dir + "/assets/images/office_back_lights.jpg"
+        # )
+        self.back_office_lights_background = image(
+            script_dir + "/assets/images/office_back_lights.jpg", screen_dimension, 1
         )
 
     def test(self, screen, clock):
@@ -64,8 +72,8 @@ class Office:
     def get_front_office_button(self) -> OfficeButton:
         return self.__front_office_button
 
-    def change_image(self, image: pygame.image):
-        self.office = image
+    def change_image(self, image):
+        self.office = image.get_image()
 
     def render_office(self, screen, office_state):
         mouse_pos = pygame.mouse.get_pos()
@@ -84,7 +92,7 @@ class Office:
             if self.camera_x > self.office.get_width() - self.__width
             else self.camera_x
         )
-        print(str(self.camera_x) + str(self.office.get_width()))
+        print(str(self.camera_x) + " " + str(self.office.get_width()))
         view_rect = pygame.Rect(self.camera_x, 0, self.__width, self.__height)
         screen.blit(self.office, (0, 0), view_rect)
         if (
