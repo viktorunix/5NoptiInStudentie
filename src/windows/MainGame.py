@@ -1,11 +1,12 @@
 import os
+from asyncio.unix_events import FastChildWatcher
 
 import pygame
 
 from gui import Text
 from gui.Camera import Camera
 from gui.Office import Office
-from mechanics.Big_bug import BigBug
+from mechanics.BigBug import BigBug
 from mechanics.clock import clock
 from utils.camera_state import camera_state
 from utils.office_state import office_state
@@ -24,13 +25,21 @@ class MainGame:
         self.__camera_state: camera_state = camera_state.NONE
         self.__office_state = office_state.OFFICE_FRONT_LIGHTS
         self.__clock = clock()
+        self.__door_open: bool = False
+        self.__window_open: bool = False
+        self.__lights_on: bool = True
 
         self.bug_enemy = BigBug("BigBug", camera_state.BATHROOM_HALLWAY, 5)
 
-    def loadingScreen(self, screen: pygame.Surface, clock: pygame.time.Clock):
+    def loadingScreen(
+        self, screen: pygame.Surface, clock: pygame.time.Clock, new_game: bool = False
+    ):
         loaded = False
         font = pygame.font.Font(None, 74)
-        self.loaded_state = stateLoader.loadState()
+        if not new_game:
+            self.loaded_state = stateLoader.load_state()
+        else:
+            self.loaded_state = stateLoader.new_state()
         text = Text.Text(screen, None, 74)
         while not loaded:
             for event in pygame.event.get():
@@ -69,14 +78,31 @@ class MainGame:
 
     def office_event_handler(self, event):
         """Handling events in regards with office_state"""
-        if self.__office_state is office_state.OFFICE_FRONT_LIGHTS:
+        if (
+            self.__office_state is office_state.OFFICE_FRONT_LIGHTS
+            or self.__office_state is office_state.OFFICE_FRONT_LIGHTS_OPEN
+        ):
             if self.office.get_camera_button().mouse_click_handler(event.pos):
                 self.__camera_state = camera_state.MAIN_HALLWAY_A
             if self.office.get_back_office_button().mouse_click_handler(event.pos):
                 self.__office_state = office_state.OFFICE_BACK_LIGHTS
-        elif self.__office_state is office_state.OFFICE_BACK_LIGHTS:
+            if self.office.get_door_button().mouse_click_handler(event.pos):
+                print(str(self.__door_open))
+                if not self.__door_open:
+                    self.__office_state = office_state.OFFICE_FRONT_LIGHTS_OPEN
+                    self.__door_open = True
+                else:
+                    print("a ajuns aici")
+                    self.__office_state = office_state.OFFICE_FRONT_LIGHTS
+                    self.__door_open = False
+        # if self.__office_state is office_state.OFFICE_FRONT_LIGHTS:
+
+        if self.__office_state is office_state.OFFICE_BACK_LIGHTS:
             if self.office.get_front_office_button().mouse_click_handler(event.pos):
-                self.__office_state = office_state.OFFICE_FRONT_LIGHTS
+                if not self.__door_open:
+                    self.__office_state = office_state.OFFICE_FRONT_LIGHTS
+                else:
+                    self.__office_state = office_state.OFFICE_FRONT_LIGHTS_OPEN
         elif self.__office_state is office_state.OFFICE_FRONT_DARK:
             if self.office.get_back_office_button().mouse_click_handler(event.pos):
                 self.__office_state = office_state.OFFICE_BACK_DARK
@@ -91,6 +117,9 @@ class MainGame:
             self.office.change_image(self.office.front_office_lights_background)
         if self.__office_state is office_state.OFFICE_BACK_LIGHTS:
             self.office.change_image(self.office.back_office_lights_background)
+
+        if self.__office_state is office_state.OFFICE_FRONT_LIGHTS_OPEN:
+            self.office.change_image(self.office.front_office_lights_open_background)
         if self.__camera_state is camera_state.NONE:
             self.office.render_office(screen, self.__office_state)
         else:

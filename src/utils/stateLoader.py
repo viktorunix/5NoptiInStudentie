@@ -1,7 +1,9 @@
 import os
-class stateLoader:
 
-    def loadState():
+
+class stateLoader:
+    @staticmethod
+    def load_state() -> dict:
         loaded_state: dict = {}
         dir: str = os.path.dirname(os.path.abspath(__file__))
         dir = dir[:-10]
@@ -11,3 +13,12 @@ class stateLoader:
             loaded_state[data[0]] = data[2]
         return loaded_state
 
+    @staticmethod
+    def new_state() -> dict:
+        loaded_state: dict = {}
+        loaded_state["night"] = 1
+        dir: str = os.path.dirname(os.path.abspath(__file__))
+        dir = dir[:-10]
+        with open(dir + "/state/save.data", "w+") as file:
+            file.write("night = 1")
+        return loaded_state

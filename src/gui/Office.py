@@ -30,6 +30,9 @@ class Office:
         self.__laptop_button = OfficeButton(
             pygame.Color("red"), self.__width - 1200, self.__height - 120, 500, 100
         )
+        self.__door_button = OfficeButton(
+            pygame.Color("red"), self.__width / 2 - 300, 50, 500, 100
+        )
         self.__front_office_button = OfficeButton(
             pygame.Color("red"), self.__width - 150, self.__height - 700, 100, 500
         )
@@ -42,6 +45,12 @@ class Office:
         print(screen_dimension)
         self.back_office_lights_background = image(
             script_dir + "/assets/images/office_back_lights.jpg", screen_dimension, 1
+        )
+
+        self.front_office_lights_open_background = image(
+            script_dir + "/assets/images/office_front_lights_open.jpg",
+            screen_dimension,
+            1,
         )
 
     def test(self, screen, clock):
@@ -58,6 +67,9 @@ class Office:
 
     def get_front_office_button(self) -> OfficeButton:
         return self.__front_office_button
+
+    def get_door_button(self) -> OfficeButton:
+        return self.__door_button
 
     def change_image(self, image):
         self.office = image.get_image()
@@ -84,11 +96,14 @@ class Office:
         if (
             office_state is office_state.OFFICE_FRONT_LIGHTS
             or office_state is office_state.OFFICE_FRONT_DARK
+            or office_state is office_state.OFFICE_FRONT_LIGHTS_OPEN
+            or office_state is office_state.OFFICE_FRONT_DARK_OPEN
         ):
             self.__camera_button.render_button(screen)
             self.__laptop_button.render_button(screen)
             if self.camera_x == 0:
                 self.__back_office_button.render_button(screen)
+                self.__door_button.render_button(screen)
         if (
             office_state is office_state.OFFICE_BACK_LIGHTS
             or office_state is office_state.OFFICE_BACK_DARK
