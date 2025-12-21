@@ -122,7 +122,8 @@ class MainGame:
 
             self.update_image(screen)
             clock_text.renderText(
-                str(self.__clock.get_minutes())
+                "0"
+                + str(self.__clock.get_minutes())
                 + ":"
                 + str(self.__clock.get_seconds())
                 + " AM",

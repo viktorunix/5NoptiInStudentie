@@ -14,9 +14,6 @@ class image:
         self.__image = pygame.transform.scale(
             self.__image, (new_width * horizontal_stretch, screen_dimensions[1])
         )
-        print(file_path)
-        print(str(self.__image.get_width()))
-        print(screen_dimensions)
 
     def get_image(self):
         return self.__image

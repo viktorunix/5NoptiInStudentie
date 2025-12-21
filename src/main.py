@@ -1,19 +1,20 @@
+import os
+import sys
+import warnings
 
 import pygame
-import sys
 
-from windows.MainGame import MainGame
-from windows.MainMenu import  MainMenu
-import os
-import warnings
 from gui.OfficeButton import OfficeButton
+from windows.MainGame import MainGame
+from windows.MainMenu import MainMenu
+
 warnings.simplefilter("always", DeprecationWarning)
 
+
 def main():
-    button: OfficeButton = OfficeButton(2,2,2,2,2, main)
+    button: OfficeButton = OfficeButton(2, 2, 2, 2, 2, main)
     script_dir = os.path.dirname(os.path.abspath(__file__))
     script_dir = script_dir[:-4]
-    print("this file is in:", script_dir)
     # Initialize Pygame
     pygame.init()
     pygame.mixer.init()
@@ -35,11 +36,12 @@ def main():
     menu.loader()
 
     menu.warningScreen(screen, clock)
-    menu.renderMainMenu(screen,clock)
-    #main_game = MainGame(WIDTH, HEIGHT)
-    #main_game.loadingScreen(screen, clock)
+    menu.renderMainMenu(screen, clock)
+    # main_game = MainGame(WIDTH, HEIGHT)
+    # main_game.loadingScreen(screen, clock)
     pygame.quit()
     sys.exit()
+
 
 if __name__ == "__main__":
     main()
