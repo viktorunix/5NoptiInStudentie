@@ -5,6 +5,7 @@ import pygame
 from gui import Text
 from gui.Camera import Camera
 from gui.Office import Office
+from mechanics.Big_bug import BigBug
 from mechanics.clock import clock
 from utils.camera_state import camera_state
 from utils.office_state import office_state
@@ -23,6 +24,8 @@ class MainGame:
         self.__camera_state: camera_state = camera_state.NONE
         self.__office_state = office_state.OFFICE_FRONT_LIGHTS
         self.__clock = clock()
+
+        self.bug_enemy = BigBug("BigBug", camera_state.BATHROOM_HALLWAY, 5)
 
     def loadingScreen(self, screen: pygame.Surface, clock: pygame.time.Clock):
         loaded = False
@@ -84,7 +87,6 @@ class MainGame:
     def update_image(self, screen):
         """Updates the screen image background depending on each state"""
         # maybe we should update the image after each press not each frame??
-        print(str(self.__office_state))
         if self.__office_state is office_state.OFFICE_FRONT_LIGHTS:
             self.office.change_image(self.office.front_office_lights_background)
         if self.__office_state is office_state.OFFICE_BACK_LIGHTS:
@@ -127,6 +129,7 @@ class MainGame:
                         self.office_event_handler(event)
 
             self.update_image(screen)
+            self.bug_enemy.update()
             clock_text.renderText(
                 "0"
                 + str(self.__clock.get_minutes())

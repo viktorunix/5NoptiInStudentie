@@ -79,7 +79,6 @@ class Office:
             if self.camera_x > self.office.get_width() - self.__width
             else self.camera_x
         )
-        print(str(self.camera_x) + " " + str(self.office.get_width()))
         view_rect = pygame.Rect(self.camera_x, 0, self.__width, self.__height)
         screen.blit(self.office, (0, 0), view_rect)
         if (
