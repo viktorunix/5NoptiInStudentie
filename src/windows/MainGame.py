@@ -8,6 +8,7 @@ from gui.Camera import Camera
 from gui.Office import Office
 from mechanics.BigBug import BigBug
 from mechanics.clock import clock
+from mechanics.spray import spray
 from utils.camera_state import camera_state
 from utils.office_state import office_state
 from utils.stateLoader import stateLoader
@@ -30,6 +31,7 @@ class MainGame:
         self.__lights_on: bool = True
 
         self.bug_enemy = BigBug("BigBug", camera_state.BATHROOM_HALLWAY, 10)
+        self.spray = spray(script_dir)
 
     def loadingScreen(
         self, screen: pygame.Surface, clock: pygame.time.Clock, new_game: bool = False
@@ -191,6 +193,19 @@ class MainGame:
         ):
             self.__camera_state = camera_state.STAIRWAY
 
+    def handle_spray_mechanic(self):
+        if self.__camera_state is not camera_state.NONE:
+            return
+        print("aici")
+        if self.__office_state in [
+            office_state.OFFICE_FRONT_LIGHTS_OPEN,
+            office_state.OFFICE_FRONT_DARK_OPEN,
+        ]:
+            print("da aici?")
+            if self.spray.use_spray():
+                if self.bug_enemy.location is camera_state.MAIN_HALLWAY_OFFICE:
+                    self.bug_enemy.force_retreat(camera_state.BATHROOM_HALLWAY)
+
     def main_game(self, screen: pygame.Surface):
         """main gameloop"""
         clock_text = Text.Text(screen)
@@ -206,11 +221,13 @@ class MainGame:
                         self.__office_state = office_state.OFFICE_FRONT_DARK
                     elif self.__office_state is office_state.OFFICE_FRONT_DARK:
                         self.__office_state = office_state.OFFICE_FRONT_LIGHTS
-                elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     if self.__camera_state is not camera_state.NONE:
                         self.camera_event_handler_3(event)
                     else:
                         self.office_event_handler(event)
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                    self.handle_spray_mechanic()
 
             self.update_image(screen)
             self.bug_enemy.update()
