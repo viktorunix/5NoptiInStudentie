@@ -39,20 +39,7 @@ class Office:
         self.front_office_lights_background = image(
             script_dir + "/assets/images/office_front_lights.jpeg", screen_dimension, 1
         )
-        # print(str(self.front_office_lights_background.get_image().get_width()))
         print(screen_dimension)
-        # self.front_office_lights_background = pygame.image.load(
-        #    script_dir + "/assets/images/office_front_lights.jpeg"
-        # )
-        # scale_factor = self.__height / self.front_office_lights_background.get_height()
-        # new_width = int(self.front_office_lights_background.get_width() * scale_factor)
-        # print(str(scale_factor) + " " + str(new_width))
-        # self.front_office_lights_background = pygame.transform.scale(
-        #    self.front_office_lights_background, (new_width, self.__height)
-        # )
-        # self.back_office_lights_background = pygame.image.load(
-        #    script_dir + "/assets/images/office_back_lights.jpg"
-        # )
         self.back_office_lights_background = image(
             script_dir + "/assets/images/office_back_lights.jpg", screen_dimension, 1
         )
@@ -107,5 +94,5 @@ class Office:
             office_state is office_state.OFFICE_BACK_LIGHTS
             or office_state is office_state.OFFICE_BACK_DARK
         ):
-            if self.camera_x == self.office_width - self.__width:
+            if self.camera_x == self.office.get_width() - self.__width:
                 self.__front_office_button.render_button(screen)
