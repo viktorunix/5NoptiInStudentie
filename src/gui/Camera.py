@@ -56,6 +56,27 @@ class Camera:
             script_dir + "/assets/images/main_hallway_office.jpg", screen_dimension, 1
         )
 
+        self.bath_hallway_bug_background = image(
+            script_dir + "/assets/images/bath_hallway_bug.jpg", screen_dimension, 1
+        )
+        self.main_hallway_a_bug_background = image(
+            script_dir + "/assets/images/main_hallway_a_bug.jpg", screen_dimension, 1
+        )
+        self.main_hallway_b_bug_background = image(
+            script_dir + "/assets/images/main_hallway_b_bug.jpg", screen_dimension, 1
+        )
+        self.main_hallway_office_bug_background = image(
+            script_dir + "/assets/images/main_hallway_office_bug.jpg",
+            screen_dimension,
+            1,
+        )
+
+        self.staircase_bug_background = image(
+            script_dir + "/assets/images/staircase_bug.jpg",
+            screen_dimension,
+            1,
+        )
+
     def change_image(self, image):
         self.camera = image.get_image()
 

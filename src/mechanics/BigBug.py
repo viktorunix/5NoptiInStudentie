@@ -56,3 +56,6 @@ class BigBug:
 
     def set_ai_level(self, level):
         self.ai_level = level
+
+    def get_location(self) -> camera_state:
+        return self.location

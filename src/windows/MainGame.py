@@ -29,7 +29,7 @@ class MainGame:
         self.__window_open: bool = False
         self.__lights_on: bool = True
 
-        self.bug_enemy = BigBug("BigBug", camera_state.BATHROOM_HALLWAY, 5)
+        self.bug_enemy = BigBug("BigBug", camera_state.BATHROOM_HALLWAY, 10)
 
     def loadingScreen(
         self, screen: pygame.Surface, clock: pygame.time.Clock, new_game: bool = False
@@ -64,17 +64,32 @@ class MainGame:
         if self.camera.get_office_button().mouse_click_handler(event.pos):
             self.__camera_state = camera_state.NONE
         elif self.camera.get_main_hallway_b_button().mouse_click_handler(event.pos):
-            self.__camera_state = camera_state.MAIN_HALLWAY_B
+            if self.bug_enemy.get_location() is camera_state.MAIN_HALLWAY_B:
+                self.__camera_state = camera_state.MAIN_HALLWAY_B_BUG
+            else:
+                self.__camera_state = camera_state.MAIN_HALLWAY_B
         elif self.camera.get_main_hallway_a_button().mouse_click_handler(event.pos):
-            self.__camera_state = camera_state.MAIN_HALLWAY_A
+            if self.bug_enemy.get_location() is camera_state.MAIN_HALLWAY_A:
+                self.__camera_state = camera_state.MAIN_HALLWAY_A_BUG
+            else:
+                self.__camera_state = camera_state.MAIN_HALLWAY_A
         elif self.camera.get_staircase_button().mouse_click_handler(event.pos):
-            self.__camera_state = camera_state.STAIRWAY
+            if self.bug_enemy.get_location() is camera_state.STAIRWAY:
+                self.__camera_state = camera_state.STAIRWAY_BUG
+            else:
+                self.__camera_state = camera_state.STAIRWAY
         elif self.camera.get_bath_hallway_button().mouse_click_handler(event.pos):
-            self.__camera_state = camera_state.BATHROOM_HALLWAY
+            if self.bug_enemy.get_location() is camera_state.BATHROOM_HALLWAY:
+                self.__camera_state = camera_state.BATHROOM_HALLWAY_BUG
+            else:
+                self.__camera_state = camera_state.BATHROOM_HALLWAY
         elif self.camera.get_main_hallway_office_button().mouse_click_handler(
             event.pos
         ):
-            self.__camera_state = camera_state.MAIN_HALLWAY_OFFICE
+            if self.bug_enemy.get_location() is camera_state.MAIN_HALLWAY_OFFICE:
+                self.__camera_state = camera_state.MAIN_HALLWAY_OFFICE_BUG
+            else:
+                self.__camera_state = camera_state.MAIN_HALLWAY_OFFICE
 
     def office_event_handler(self, event):
         """Handling events in regards with office_state"""
@@ -83,7 +98,10 @@ class MainGame:
             or self.__office_state is office_state.OFFICE_FRONT_LIGHTS_OPEN
         ):
             if self.office.get_camera_button().mouse_click_handler(event.pos):
-                self.__camera_state = camera_state.MAIN_HALLWAY_A
+                if self.bug_enemy.get_location() is camera_state.MAIN_HALLWAY_A:
+                    self.__camera_state = camera_state.MAIN_HALLWAY_A_BUG
+                else:
+                    self.__camera_state = camera_state.MAIN_HALLWAY_A
             if self.office.get_back_office_button().mouse_click_handler(event.pos):
                 self.__office_state = office_state.OFFICE_BACK_LIGHTS
             if self.office.get_door_button().mouse_click_handler(event.pos):
@@ -132,8 +150,46 @@ class MainGame:
             self.camera.change_image(self.camera.main_hallway_b_background)
         if self.__camera_state is camera_state.BATHROOM_HALLWAY:
             self.camera.change_image(self.camera.bath_hallway_background)
+        if self.__camera_state is camera_state.BATHROOM_HALLWAY_BUG:
+            self.camera.change_image(self.camera.bath_hallway_bug_background)
+        if self.__camera_state is camera_state.MAIN_HALLWAY_A_BUG:
+            self.camera.change_image(self.camera.main_hallway_a_bug_background)
+        if self.__camera_state is camera_state.MAIN_HALLWAY_B_BUG:
+            self.camera.change_image(self.camera.main_hallway_b_bug_background)
+        if self.__camera_state is camera_state.MAIN_HALLWAY_OFFICE_BUG:
+            self.camera.change_image(self.camera.main_hallway_office_bug_background)
+        if self.__camera_state is camera_state.STAIRWAY_BUG:
+            self.camera.change_image(self.camera.staircase_bug_background)
         if self.__camera_state is camera_state.MAIN_HALLWAY_OFFICE:
             self.camera.change_image(self.camera.main_hallway_office_background)
+
+    def update_bug_camera(self):
+        """if the player is on the cam where the bug is but meanwhile the bug moves the player still sees it so this is why i wrote this function"""
+        if (
+            self.__camera_state is camera_state.BATHROOM_HALLWAY_BUG
+            and self.bug_enemy.get_location() is not camera_state.BATHROOM_HALLWAY
+        ):
+            self.__camera_state = camera_state.BATHROOM_HALLWAY
+        elif (
+            self.__camera_state is camera_state.MAIN_HALLWAY_A_BUG
+            and self.bug_enemy.get_location() is not camera_state.MAIN_HALLWAY_A
+        ):
+            self.__camera_state = camera_state.MAIN_HALLWAY_A
+        elif (
+            self.__camera_state is camera_state.MAIN_HALLWAY_B_BUG
+            and self.bug_enemy.get_location() is not camera_state.MAIN_HALLWAY_B
+        ):
+            self.__camera_state = camera_state.MAIN_HALLWAY_B
+        elif (
+            self.__camera_state is camera_state.MAIN_HALLWAY_OFFICE_BUG
+            and self.bug_enemy.get_location() is not camera_state.MAIN_HALLWAY_OFFICE
+        ):
+            self.__camera_state = camera_state.MAIN_HALLWAY_OFFICE
+        elif (
+            self.__camera_state is camera_state.STAIRWAY_BUG
+            and self.bug_enemy.get_location() is not camera_state.STAIRWAY
+        ):
+            self.__camera_state = camera_state.STAIRWAY
 
     def main_game(self, screen: pygame.Surface):
         """main gameloop"""
@@ -142,7 +198,6 @@ class MainGame:
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit()
                     exit()
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_z:
                     # just testing this will be removed
@@ -159,6 +214,7 @@ class MainGame:
 
             self.update_image(screen)
             self.bug_enemy.update()
+            self.update_bug_camera()
             clock_text.renderText(
                 "0"
                 + str(self.__clock.get_minutes())
