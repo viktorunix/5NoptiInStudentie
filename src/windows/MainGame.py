@@ -6,7 +6,7 @@ import pygame
 from gui import Text
 from gui.Camera import Camera
 from gui.Office import Office
-from mechanics.Big_bug import BigBug
+from mechanics.BigBug import BigBug
 from mechanics.clock import clock
 from utils.camera_state import camera_state
 from utils.office_state import office_state
@@ -31,7 +31,9 @@ class MainGame:
 
         self.bug_enemy = BigBug("BigBug", camera_state.BATHROOM_HALLWAY, 5)
 
-    def loadingScreen(self, screen: pygame.Surface, clock: pygame.time.Clock):
+    def loadingScreen(
+        self, screen: pygame.Surface, clock: pygame.time.Clock, new_game: bool = False
+    ):
         loaded = False
         font = pygame.font.Font(None, 74)
         if not new_game:
