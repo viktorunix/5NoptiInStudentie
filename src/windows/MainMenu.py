@@ -120,10 +120,12 @@ class MainMenu:
     def event_test(self, screen: Surface, clock: Clock):
         self.channel.stop()
         mainGame = MainGame(self.WIDTH, self.HEIGHT, self.script_dir)
-        mainGame.loadingScreen(screen, clock)
+        mainGame.loadingScreen(screen, clock, True)
 
     def event_test_altu(self, screen, clock):
-        print("merge si asta")
+        self.channel.stop()
+        mainGame = MainGame(self.WIDTH, self.HEIGHT, self.script_dir)
+        mainGame.loadingScreen(screen, clock)
 
     def renderMainMenu(self, screen: Surface, clock: Clock):
         self.channel.play(self.sound, -1)
