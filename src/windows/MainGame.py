@@ -59,6 +59,10 @@ class MainGame:
             self.__camera_state = camera_state.STAIRWAY
         elif self.camera.get_bath_hallway_button().mouse_click_handler(event.pos):
             self.__camera_state = camera_state.BATHROOM_HALLWAY
+        elif self.camera.get_main_hallway_office_button().mouse_click_handler(
+            event.pos
+        ):
+            self.__camera_state = camera_state.MAIN_HALLWAY_OFFICE
 
     def office_event_handler(self, event):
         """Handling events in regards with office_state"""
@@ -97,6 +101,8 @@ class MainGame:
             self.camera.change_image(self.camera.main_hallway_b_background)
         if self.__camera_state is camera_state.BATHROOM_HALLWAY:
             self.camera.change_image(self.camera.bath_hallway_background)
+        if self.__camera_state is camera_state.MAIN_HALLWAY_OFFICE:
+            self.camera.change_image(self.camera.main_hallway_office_background)
 
     def main_game(self, screen: pygame.Surface):
         """main gameloop"""

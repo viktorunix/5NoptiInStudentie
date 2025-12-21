@@ -24,17 +24,21 @@ class Camera:
         self.__office_button = OfficeButton(
             pygame.Color("red"), self.__width - 600, self.__height - 120, 500, 100
         )
-        self.__main_hallway_a_button = OfficeButton(
+
+        self.__bath_hallway_button = OfficeButton(
             pygame.Color("red"), self.__width - 900, self.__height - 300, 80, 80
         )
-        self.__bath_hallway_button = OfficeButton(
+        self.__main_hallway_a_button = OfficeButton(
             pygame.Color("red"), self.__width - 800, self.__height - 300, 80, 80
         )
-        self.__main_hallway_b_button = OfficeButton(
+        self.__main_hallway_office_button = OfficeButton(
             pygame.Color("red"), self.__width - 700, self.__height - 300, 80, 80
         )
-        self.__staircase_button = OfficeButton(
+        self.__main_hallway_b_button = OfficeButton(
             pygame.Color("red"), self.__width - 600, self.__height - 300, 80, 80
+        )
+        self.__staircase_button = OfficeButton(
+            pygame.Color("red"), self.__width - 500, self.__height - 300, 80, 80
         )
         self.staircase_background = image(
             script_dir + "/assets/images/staircase.jpg", screen_dimension, 1
@@ -47,6 +51,9 @@ class Camera:
         )
         self.bath_hallway_background = image(
             script_dir + "/assets/images/bath_hallway.jpg", screen_dimension, 1
+        )
+        self.main_hallway_office_background = image(
+            script_dir + "/assets/images/main_hallway_office.jpg", screen_dimension, 1
         )
 
     def change_image(self, image):
@@ -67,6 +74,9 @@ class Camera:
     def get_main_hallway_b_button(self) -> OfficeButton:
         return self.__main_hallway_b_button
 
+    def get_main_hallway_office_button(self) -> OfficeButton:
+        return self.__main_hallway_office_button
+
     def render_camera(self, screen, camera_state):
         screen.blit(self.camera, (0, 0))
         self.__office_button.render_button(screen)
@@ -74,3 +84,4 @@ class Camera:
         self.__bath_hallway_button.render_button(screen)
         self.__main_hallway_b_button.render_button(screen)
         self.__staircase_button.render_button(screen)
+        self.__main_hallway_office_button.render_button(screen)
