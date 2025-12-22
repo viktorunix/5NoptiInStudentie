@@ -30,8 +30,32 @@ class MainGame:
         self.__window_open: bool = False
         self.__lights_on: bool = True
 
+        self.last_camera_state = None
+        self.last_office_state = None
+
         self.bug_enemy = BigBug("BigBug", camera_state.BATHROOM_HALLWAY, 10)
         self.spray = spray(script_dir)
+
+        self.office_image_map = {
+            office_state.OFFICE_FRONT_LIGHTS: self.office.front_office_lights_background,
+            office_state.OFFICE_BACK_LIGHTS: self.office.back_office_lights_background,
+            office_state.OFFICE_FRONT_LIGHTS_OPEN: self.office.front_office_lights_open_background,
+            # office_state.OFFICE_FRONT_DARK: self.office.front_office_dark_background,
+            # office_state.OFFICE_BACK_DARK: self.office_back_office_dark_background
+        }
+
+        self.camera_image_map = {
+            camera_state.BATHROOM_HALLWAY: self.camera.staircase_background,
+            camera_state.MAIN_HALLWAY_A: self.camera.main_hallway_a_background,
+            camera_state.MAIN_HALLWAY_OFFICE: self.camera.main_hallway_office_background,
+            camera_state.MAIN_HALLWAY_B: self.camera.main_hallway_b_background,
+            camera_state.STAIRWAY: self.camera.staircase_background,
+            camera_state.BATHROOM_HALLWAY_BUG: self.camera.staircase_bug_background,
+            camera_state.MAIN_HALLWAY_A_BUG: self.camera.main_hallway_a_bug_background,
+            camera_state.MAIN_HALLWAY_OFFICE_BUG: self.camera.main_hallway_office_bug_background,
+            camera_state.MAIN_HALLWAY_B_BUG: self.camera.main_hallway_b_bug_background,
+            camera_state.STAIRWAY_BUG: self.camera.staircase_bug_background,
+        }
 
     def loadingScreen(
         self, screen: pygame.Surface, clock: pygame.time.Clock, new_game: bool = False
@@ -62,36 +86,46 @@ class MainGame:
             self.ticks += 1
         self.main_game(screen)
 
-    def camera_event_handler_3(self, event):
+    def camera_event_handler(self, event):
         if self.camera.get_office_button().mouse_click_handler(event.pos):
             self.__camera_state = camera_state.NONE
-        elif self.camera.get_main_hallway_b_button().mouse_click_handler(event.pos):
-            if self.bug_enemy.get_location() is camera_state.MAIN_HALLWAY_B:
-                self.__camera_state = camera_state.MAIN_HALLWAY_B_BUG
-            else:
-                self.__camera_state = camera_state.MAIN_HALLWAY_B
-        elif self.camera.get_main_hallway_a_button().mouse_click_handler(event.pos):
-            if self.bug_enemy.get_location() is camera_state.MAIN_HALLWAY_A:
-                self.__camera_state = camera_state.MAIN_HALLWAY_A_BUG
-            else:
-                self.__camera_state = camera_state.MAIN_HALLWAY_A
-        elif self.camera.get_staircase_button().mouse_click_handler(event.pos):
-            if self.bug_enemy.get_location() is camera_state.STAIRWAY:
-                self.__camera_state = camera_state.STAIRWAY_BUG
-            else:
-                self.__camera_state = camera_state.STAIRWAY
-        elif self.camera.get_bath_hallway_button().mouse_click_handler(event.pos):
-            if self.bug_enemy.get_location() is camera_state.BATHROOM_HALLWAY:
-                self.__camera_state = camera_state.BATHROOM_HALLWAY_BUG
-            else:
-                self.__camera_state = camera_state.BATHROOM_HALLWAY
-        elif self.camera.get_main_hallway_office_button().mouse_click_handler(
-            event.pos
-        ):
-            if self.bug_enemy.get_location() is camera_state.MAIN_HALLWAY_OFFICE:
-                self.__camera_state = camera_state.MAIN_HALLWAY_OFFICE_BUG
-            else:
-                self.__camera_state = camera_state.MAIN_HALLWAY_OFFICE
+            return
+
+        cam_buttons = [
+            (
+                self.camera.get_main_hallway_b_button(),
+                camera_state.MAIN_HALLWAY_B,
+                camera_state.MAIN_HALLWAY_B_BUG,
+            ),
+            (
+                self.camera.get_main_hallway_a_button(),
+                camera_state.MAIN_HALLWAY_A,
+                camera_state.MAIN_HALLWAY_A_BUG,
+            ),
+            (
+                self.camera.get_main_hallway_office_button(),
+                camera_state.MAIN_HALLWAY_OFFICE,
+                camera_state.MAIN_HALLWAY_OFFICE_BUG,
+            ),
+            (
+                self.camera.get_staircase_button(),
+                camera_state.STAIRWAY,
+                camera_state.STAIRWAY_BUG,
+            ),
+            (
+                self.camera.get_bath_hallway_button(),
+                camera_state.BATHROOM_HALLWAY,
+                camera_state.BATHROOM_HALLWAY_BUG,
+            ),
+        ]
+        current_bug_loc = self.bug_enemy.get_location()
+        for button, normal_state, bug_state in cam_buttons:
+            if button.mouse_click_handler(event.pos):
+                if current_bug_loc == normal_state:
+                    self.__camera_state = bug_state
+                else:
+                    self.__camera_state = normal_state
+                return
 
     def office_event_handler(self, event):
         """Handling events in regards with office_state"""
@@ -130,40 +164,22 @@ class MainGame:
             if self.office.get_front_office_button().mouse_click_handler(event.pos):
                 self.__office_state = office_state.OFFICE_FRONT_DARK
 
-    def update_image(self, screen):
-        """Updates the screen image background depending on each state"""
-        # maybe we should update the image after each press not each frame??
-        if self.__office_state is office_state.OFFICE_FRONT_LIGHTS:
-            self.office.change_image(self.office.front_office_lights_background)
-        if self.__office_state is office_state.OFFICE_BACK_LIGHTS:
-            self.office.change_image(self.office.back_office_lights_background)
-
-        if self.__office_state is office_state.OFFICE_FRONT_LIGHTS_OPEN:
-            self.office.change_image(self.office.front_office_lights_open_background)
-        if self.__camera_state is camera_state.NONE:
-            self.office.render_office(screen, self.__office_state)
-        else:
+    def new_update_image(self, screen):
+        if self.__camera_state is not camera_state.NONE:
+            if self.__camera_state is not self.last_camera_state:
+                target_img = self.camera_image_map.get(self.__camera_state)
+                if target_img:
+                    self.camera.change_image(target_img)
+                self.last_camera_state = self.__camera_state
             self.camera.render_camera(screen, self.__camera_state)
-        if self.__camera_state is camera_state.STAIRWAY:
-            self.camera.change_image(self.camera.staircase_background)
-        if self.__camera_state is camera_state.MAIN_HALLWAY_A:
-            self.camera.change_image(self.camera.main_hallway_a_background)
-        if self.__camera_state is camera_state.MAIN_HALLWAY_B:
-            self.camera.change_image(self.camera.main_hallway_b_background)
-        if self.__camera_state is camera_state.BATHROOM_HALLWAY:
-            self.camera.change_image(self.camera.bath_hallway_background)
-        if self.__camera_state is camera_state.BATHROOM_HALLWAY_BUG:
-            self.camera.change_image(self.camera.bath_hallway_bug_background)
-        if self.__camera_state is camera_state.MAIN_HALLWAY_A_BUG:
-            self.camera.change_image(self.camera.main_hallway_a_bug_background)
-        if self.__camera_state is camera_state.MAIN_HALLWAY_B_BUG:
-            self.camera.change_image(self.camera.main_hallway_b_bug_background)
-        if self.__camera_state is camera_state.MAIN_HALLWAY_OFFICE_BUG:
-            self.camera.change_image(self.camera.main_hallway_office_bug_background)
-        if self.__camera_state is camera_state.STAIRWAY_BUG:
-            self.camera.change_image(self.camera.staircase_bug_background)
-        if self.__camera_state is camera_state.MAIN_HALLWAY_OFFICE:
-            self.camera.change_image(self.camera.main_hallway_office_background)
+
+        else:
+            if self.__office_state is not self.last_office_state:
+                target_img = self.office_image_map.get(self.__office_state)
+                if target_img:
+                    self.office.change_image(target_img)
+                self.last_office_state = self.__office_state
+            self.office.render_office(screen, self.__office_state)
 
     def update_bug_camera(self):
         """if the player is on the cam where the bug is but meanwhile the bug moves the player still sees it so this is why i wrote this function"""
@@ -223,13 +239,13 @@ class MainGame:
                         self.__office_state = office_state.OFFICE_FRONT_LIGHTS
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     if self.__camera_state is not camera_state.NONE:
-                        self.camera_event_handler_3(event)
+                        self.camera_event_handler(event)
                     else:
                         self.office_event_handler(event)
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                     self.handle_spray_mechanic()
 
-            self.update_image(screen)
+            self.new_update_image(screen)
             self.bug_enemy.update()
             self.update_bug_camera()
             clock_text.renderText(
