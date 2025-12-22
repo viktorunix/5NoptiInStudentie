@@ -37,6 +37,8 @@ class Office:
             pygame.Color("red"), self.__width - 150, self.__height - 700, 100, 500
         )
         self.__front_office_button.change_state()
+
+        self.__window_button = OfficeButton(pygame.Color("red"), 100, 100, 100, 100)
         run = True
         clock = pygame.time.Clock()
         self.front_office_lights_background = image(
@@ -49,6 +51,12 @@ class Office:
 
         self.front_office_lights_open_background = image(
             script_dir + "/assets/images/office_front_lights_open.jpg",
+            screen_dimension,
+            1,
+        )
+
+        self.back_office_lights_open_background = image(
+            script_dir + "/assets/images/office_back_lights_open.jpg",
             screen_dimension,
             1,
         )
@@ -70,6 +78,9 @@ class Office:
 
     def get_door_button(self) -> OfficeButton:
         return self.__door_button
+
+    def get_window_button(self) -> OfficeButton:
+        return self.__window_button
 
     def change_image(self, image):
         self.office = image.get_image()
@@ -110,3 +121,4 @@ class Office:
         ):
             if self.camera_x == self.office.get_width() - self.__width:
                 self.__front_office_button.render_button(screen)
+                self.__window_button.render_button(screen)

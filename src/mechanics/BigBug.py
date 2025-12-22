@@ -56,3 +56,11 @@ class BigBug:
 
     def set_ai_level(self, level):
         self.ai_level = level
+
+    def get_location(self) -> camera_state:
+        return self.location
+
+    def force_retreat(self, target_room: camera_state):
+        print(f"[{self.name}] REPELLED! Moved back to {target_room}")
+        self.location = target_room
+        self.move_timer = 0
