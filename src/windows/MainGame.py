@@ -8,6 +8,7 @@ from gui.Camera import Camera
 from gui.Office import Office
 from mechanics.BigBug import BigBug
 from mechanics.clock import clock
+from mechanics.OxygenMeter import OxygenMeter
 from mechanics.spray import spray
 from utils.camera_state import camera_state
 from utils.office_state import office_state
@@ -36,21 +37,25 @@ class MainGame:
         self.bug_enemy = BigBug("BigBug", camera_state.BATHROOM_HALLWAY, 10)
         self.spray = spray(script_dir)
 
+        self.oxygen = OxygenMeter(max_oxygen=100, regen_rate=0.2)
+        self.game_over = False
+
         self.office_image_map = {
             office_state.OFFICE_FRONT_LIGHTS: self.office.front_office_lights_background,
             office_state.OFFICE_BACK_LIGHTS: self.office.back_office_lights_background,
             office_state.OFFICE_FRONT_LIGHTS_OPEN: self.office.front_office_lights_open_background,
+            office_state.OFFICE_BACK_LIGHTS_OPEN: self.office.back_office_lights_open_background,
             # office_state.OFFICE_FRONT_DARK: self.office.front_office_dark_background,
             # office_state.OFFICE_BACK_DARK: self.office_back_office_dark_background
         }
 
         self.camera_image_map = {
-            camera_state.BATHROOM_HALLWAY: self.camera.staircase_background,
+            camera_state.BATHROOM_HALLWAY: self.camera.bath_hallway_background,
             camera_state.MAIN_HALLWAY_A: self.camera.main_hallway_a_background,
             camera_state.MAIN_HALLWAY_OFFICE: self.camera.main_hallway_office_background,
             camera_state.MAIN_HALLWAY_B: self.camera.main_hallway_b_background,
             camera_state.STAIRWAY: self.camera.staircase_background,
-            camera_state.BATHROOM_HALLWAY_BUG: self.camera.staircase_bug_background,
+            camera_state.BATHROOM_HALLWAY_BUG: self.camera.bath_hallway_bug_background,
             camera_state.MAIN_HALLWAY_A_BUG: self.camera.main_hallway_a_bug_background,
             camera_state.MAIN_HALLWAY_OFFICE_BUG: self.camera.main_hallway_office_bug_background,
             camera_state.MAIN_HALLWAY_B_BUG: self.camera.main_hallway_b_bug_background,
@@ -127,42 +132,51 @@ class MainGame:
                     self.__camera_state = normal_state
                 return
 
-    def office_event_handler(self, event):
-        """Handling events in regards with office_state"""
-        if (
-            self.__office_state is office_state.OFFICE_FRONT_LIGHTS
-            or self.__office_state is office_state.OFFICE_FRONT_LIGHTS_OPEN
-        ):
+    def new_office_event_handler(self, event):
+        is_front = self.__office_state in [
+            office_state.OFFICE_FRONT_LIGHTS,
+            office_state.OFFICE_FRONT_LIGHTS_OPEN,
+        ]
+        is_back = self.__office_state in [
+            office_state.OFFICE_BACK_LIGHTS,
+            office_state.OFFICE_BACK_LIGHTS_OPEN,
+        ]
+        if is_front:
+            # opening camera
             if self.office.get_camera_button().mouse_click_handler(event.pos):
                 if self.bug_enemy.get_location() is camera_state.MAIN_HALLWAY_A:
                     self.__camera_state = camera_state.MAIN_HALLWAY_A_BUG
                 else:
                     self.__camera_state = camera_state.MAIN_HALLWAY_A
+
+            # turning around
             if self.office.get_back_office_button().mouse_click_handler(event.pos):
-                self.__office_state = office_state.OFFICE_BACK_LIGHTS
+                if not self.__window_open:
+                    self.__office_state = office_state.OFFICE_BACK_LIGHTS
+                else:
+                    self.__office_state = office_state.OFFICE_BACK_LIGHTS_OPEN
+
+            # toggle door
             if self.office.get_door_button().mouse_click_handler(event.pos):
-                print(str(self.__door_open))
                 if not self.__door_open:
                     self.__office_state = office_state.OFFICE_FRONT_LIGHTS_OPEN
                     self.__door_open = True
                 else:
-                    print("a ajuns aici")
                     self.__office_state = office_state.OFFICE_FRONT_LIGHTS
                     self.__door_open = False
-        # if self.__office_state is office_state.OFFICE_FRONT_LIGHTS:
-
-        if self.__office_state is office_state.OFFICE_BACK_LIGHTS:
+        if is_back:
             if self.office.get_front_office_button().mouse_click_handler(event.pos):
                 if not self.__door_open:
                     self.__office_state = office_state.OFFICE_FRONT_LIGHTS
                 else:
                     self.__office_state = office_state.OFFICE_FRONT_LIGHTS_OPEN
-        elif self.__office_state is office_state.OFFICE_FRONT_DARK:
-            if self.office.get_back_office_button().mouse_click_handler(event.pos):
-                self.__office_state = office_state.OFFICE_BACK_DARK
-        elif self.__office_state is office_state.OFFICE_BACK_DARK:
-            if self.office.get_front_office_button().mouse_click_handler(event.pos):
-                self.__office_state = office_state.OFFICE_FRONT_DARK
+            if self.office.get_window_button().mouse_click_handler(event.pos):
+                if not self.__window_open:
+                    self.__office_state = office_state.OFFICE_BACK_LIGHTS_OPEN
+                    self.__window_open = True
+                else:
+                    self.__office_state = office_state.OFFICE_BACK_LIGHTS
+                    self.__window_open = False
 
     def new_update_image(self, screen):
         if self.__camera_state is not camera_state.NONE:
@@ -210,22 +224,29 @@ class MainGame:
             self.__camera_state = camera_state.STAIRWAY
 
     def handle_spray_mechanic(self):
+        if self.game_over:
+            return
         if self.__camera_state is not camera_state.NONE:
             return
-        print("aici")
         if self.__office_state in [
             office_state.OFFICE_FRONT_LIGHTS_OPEN,
             office_state.OFFICE_FRONT_DARK_OPEN,
         ]:
-            print("da aici?")
+            print("aici")
             if self.spray.use_spray():
-                if self.bug_enemy.location is camera_state.MAIN_HALLWAY_OFFICE:
+                toxicity = self.spray.get_toxicity()
+                is_suffocating = self.oxygen.deplete(toxicity)
+                if is_suffocating:
+                    print("GAME OVER: TE-AI SUFOCAT")
+                    self.game_over = True
+                if self.bug_enemy.get_location() is camera_state.MAIN_HALLWAY_OFFICE:
                     self.bug_enemy.force_retreat(camera_state.BATHROOM_HALLWAY)
 
     def main_game(self, screen: pygame.Surface):
         """main gameloop"""
         clock_text = Text.Text(screen)
         framerate_clock = pygame.time.Clock()
+        ammo_text = Text.Text(screen, fontSize=30)
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -241,13 +262,16 @@ class MainGame:
                     if self.__camera_state is not camera_state.NONE:
                         self.camera_event_handler(event)
                     else:
-                        self.office_event_handler(event)
+                        self.new_office_event_handler(event)
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                     self.handle_spray_mechanic()
 
             self.new_update_image(screen)
             self.bug_enemy.update()
+            self.spray.update()
             self.update_bug_camera()
+            if self.__window_open:
+                self.oxygen.update()
             clock_text.renderText(
                 "0"
                 + str(self.__clock.get_minutes())
@@ -258,6 +282,11 @@ class MainGame:
                 (self.WIDTH - 100, 40),
                 True,
             )
+
+            self.oxygen.render_bar(screen, 20, self.HEIGHT - 50)
+            ammo_count = self.spray.current_uses
+            color = "white" if ammo_count > 0 else "red"
+            ammo_text.renderText(f"Spray: {ammo_count}", color, (230, self.HEIGHT - 50))
             pygame.display.flip()
             framerate_clock.tick(60)
             self.__clock.update()
