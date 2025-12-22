@@ -155,7 +155,7 @@ class MainMenu:
 
             screen.blit(self.bugimage, (700, -200))
 
-            text.renderText("ALPHA 1", pygame.Color("white"), (1030, 680))
+            text.renderText("ALPHA 2", pygame.Color("white"), (1030, 680))
             # self.renderButtons(screen)
             pygame.display.flip()
             clock.tick(60)
