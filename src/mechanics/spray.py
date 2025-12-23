@@ -14,7 +14,6 @@ class spray:
             self.sound = None
 
     def update(self):
-        print(self.cooldown_timer)
         if self.cooldown_timer > 0:
             self.cooldown_timer -= 1
 

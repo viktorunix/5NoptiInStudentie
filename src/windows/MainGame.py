@@ -37,7 +37,7 @@ class MainGame:
         self.bug_enemy = BigBug("BigBug", camera_state.BATHROOM_HALLWAY, 10)
         self.spray = spray(script_dir)
 
-        self.oxygen = OxygenMeter(max_oxygen=100, regen_rate=0.2)
+        self.oxygen = OxygenMeter(max_oxygen=100, regen_rate=0.05)
         self.game_over = False
 
         self.office_image_map = {
@@ -273,17 +273,14 @@ class MainGame:
             if self.__window_open:
                 self.oxygen.update()
             clock_text.renderText(
-                "0"
-                + str(self.__clock.get_minutes())
-                + ":"
-                + str(self.__clock.get_seconds())
-                + " AM",
+                self.__clock.get_hour_text() + " AM",
                 "white",
                 (self.WIDTH - 100, 40),
                 True,
             )
 
-            self.oxygen.render_bar(screen, 20, self.HEIGHT - 50)
+            ammo_text.renderText("Oxygen Meter:", "white", (self.WIDTH - 230, 70))
+            self.oxygen.render_bar(screen, self.WIDTH - 230, 100)
             ammo_count = self.spray.current_uses
             color = "white" if ammo_count > 0 else "red"
             ammo_text.renderText(f"Spray: {ammo_count}", color, (230, self.HEIGHT - 50))

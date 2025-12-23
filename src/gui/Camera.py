@@ -1,3 +1,4 @@
+import cv2
 import pygame
 
 from gui.OfficeButton import OfficeButton
@@ -9,6 +10,7 @@ class Camera:
     """Class for rendering and defining each UI component for the camera surveillance mechanic"""
 
     def __init__(self, screen_dimension: tuple, script_dir: str):
+        self.cap = cv2.VideoCapture(script_dir + "/assets/videos/mainmenu.mp4")
         self.__width = screen_dimension[0]
         self.__height = screen_dimension[1]
         self.__script_dir = script_dir
@@ -26,19 +28,49 @@ class Camera:
         )
 
         self.__bath_hallway_button = OfficeButton(
-            pygame.Color("red"), self.__width - 900, self.__height - 300, 80, 80
+            pygame.Color("white"),
+            self.__width - 1000,
+            self.__height - 300,
+            80,
+            80,
+            cam=True,
+            text="1A",
         )
         self.__main_hallway_a_button = OfficeButton(
-            pygame.Color("red"), self.__width - 800, self.__height - 300, 80, 80
+            pygame.Color("white"),
+            self.__width - 850,
+            self.__height - 300,
+            80,
+            80,
+            cam=True,
+            text="2A",
         )
         self.__main_hallway_office_button = OfficeButton(
-            pygame.Color("red"), self.__width - 700, self.__height - 300, 80, 80
+            pygame.Color("white"),
+            self.__width - 700,
+            self.__height - 300,
+            80,
+            80,
+            cam=True,
+            text="2B",
         )
         self.__main_hallway_b_button = OfficeButton(
-            pygame.Color("red"), self.__width - 600, self.__height - 300, 80, 80
+            pygame.Color("white"),
+            self.__width - 550,
+            self.__height - 300,
+            80,
+            80,
+            cam=True,
+            text="2C",
         )
         self.__staircase_button = OfficeButton(
-            pygame.Color("red"), self.__width - 500, self.__height - 300, 80, 80
+            pygame.Color("white"),
+            self.__width - 400,
+            self.__height - 300,
+            80,
+            80,
+            cam=True,
+            text="3A",
         )
         self.staircase_background = image(
             script_dir + "/assets/images/staircase.jpg", screen_dimension, 1
@@ -100,9 +132,53 @@ class Camera:
 
     def render_camera(self, screen, camera_state):
         screen.blit(self.camera, (0, 0))
+        self.static_update(screen)
+        # main hallway
+        pygame.draw.rect(
+            screen,
+            pygame.Color("white"),
+            (self.__width - 850, self.__height - 330, 400, 140),
+            2,
+        )
+        # bathroom hallway
+        pygame.draw.rect(
+            screen,
+            pygame.Color("white"),
+            (self.__width - 1050, self.__height - 310, 150, 100),
+            2,
+        )
+        # staircase
+        pygame.draw.rect(
+            screen,
+            pygame.Color("white"),
+            (self.__width - 400, self.__height - 335, 100, 150),
+            2,
+        )
+        pygame.draw.rect(
+            screen,
+            pygame.Color("white"),
+            (self.__width - 900, self.__height - 280, 50, 30),
+            2,
+        )
+        pygame.draw.rect(
+            screen,
+            pygame.Color("white"),
+            (self.__width - 450, self.__height - 280, 50, 30),
+            2,
+        )
         self.__office_button.render_button(screen)
         self.__main_hallway_a_button.render_button(screen)
         self.__bath_hallway_button.render_button(screen)
         self.__main_hallway_b_button.render_button(screen)
         self.__staircase_button.render_button(screen)
         self.__main_hallway_office_button.render_button(screen)
+
+    def static_update(self, screen: pygame.Surface):
+        ret, frame = self.cap.read()
+        if not ret:
+            self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+            ret, frame = self.cap.read()
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        frame = pygame.surfarray.make_surface(frame.swapaxes(0, 1))
+        frame.set_alpha(64)
+        screen.blit(frame, (0, 0))

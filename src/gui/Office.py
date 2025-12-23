@@ -22,13 +22,13 @@ class Office:
         self.scroll_speed = 40
         # TODO: trebuie schimbat liniile astea
         self.__camera_button = OfficeButton(
-            pygame.Color("red"), self.__width - 600, self.__height - 120, 500, 100
+            pygame.Color("red"), self.__width - 500, self.__height - 50, 400, 70
         )
         self.__back_office_button = OfficeButton(
-            pygame.Color("red"), 50, self.__height - 700, 100, 500
+            pygame.Color("red"), 50, self.__height - 700, 70, 250
         )
         self.__laptop_button = OfficeButton(
-            pygame.Color("red"), self.__width - 1200, self.__height - 120, 500, 100
+            pygame.Color("red"), 100, self.__height - 50, 400, 70
         )
         self.__door_button = OfficeButton(
             pygame.Color("red"), self.__width / 2 - 300, 50, 500, 100
@@ -117,7 +117,7 @@ class Office:
                 self.__door_button.render_button(screen)
         if (
             office_state is office_state.OFFICE_BACK_LIGHTS
-            or office_state is office_state.OFFICE_BACK_DARK
+            or office_state is office_state.OFFICE_BACK_LIGHTS_OPEN
         ):
             if self.camera_x == self.office.get_width() - self.__width:
                 self.__front_office_button.render_button(screen)
