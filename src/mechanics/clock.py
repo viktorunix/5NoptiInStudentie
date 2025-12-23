@@ -23,3 +23,9 @@ class clock:
         if self.__seconds == 60:
             self.__minutes += 1
             self.__seconds = 0
+
+    def get_hour_text(self) -> str:
+        if self.__minutes == 0:
+            return "12"
+        else:
+            return "0" + str(self.__minutes)
