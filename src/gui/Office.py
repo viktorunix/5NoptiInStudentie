@@ -22,23 +22,25 @@ class Office:
         self.scroll_speed = 40
         # TODO: trebuie schimbat liniile astea
         self.__camera_button = OfficeButton(
-            pygame.Color("red"), self.__width - 500, self.__height - 50, 400, 70
+            pygame.Color("red"), self.__width / 2 - 350, self.__height - 50, 700, 70
         )
         self.__back_office_button = OfficeButton(
-            pygame.Color("red"), 50, self.__height - 700, 70, 250
+            pygame.Color("red"), self.__width - 120, self.__height - 700, 70, 250
         )
         self.__laptop_button = OfficeButton(
             pygame.Color("red"), 100, self.__height - 50, 400, 70
         )
         self.__door_button = OfficeButton(
-            pygame.Color("red"), self.__width / 2 - 300, 50, 500, 100
+            (255, 0, 0, 255), self.__width / 2 + 400, 200, 50, 50
         )
         self.__front_office_button = OfficeButton(
-            pygame.Color("red"), self.__width - 150, self.__height - 700, 100, 500
+            pygame.Color("red"), 50, self.__height - 700, 70, 250
         )
         self.__front_office_button.change_state()
 
-        self.__window_button = OfficeButton(pygame.Color("red"), 100, 100, 100, 100)
+        self.__window_button = OfficeButton(
+            pygame.Color("red"), self.__width - 150, 100, 100, 100
+        )
         run = True
         clock = pygame.time.Clock()
         self.front_office_lights_background = image(
@@ -69,9 +71,6 @@ class Office:
 
     def get_back_office_button(self) -> OfficeButton:
         return self.__back_office_button
-
-    def get_laptop_button(self) -> OfficeButton:
-        return self.__laptop_button
 
     def get_front_office_button(self) -> OfficeButton:
         return self.__front_office_button
@@ -110,15 +109,18 @@ class Office:
             or office_state is office_state.OFFICE_FRONT_LIGHTS_OPEN
             or office_state is office_state.OFFICE_FRONT_DARK_OPEN
         ):
-            self.__camera_button.render_button(screen)
-            self.__laptop_button.render_button(screen)
-            if self.camera_x == 0:
+            # self.__camera_button.render_button(screen)
+            self.__door_button.render_button(screen, scroll_x=self.camera_x)
+            if self.camera_x == self.office.get_width() - self.__width:
                 self.__back_office_button.render_button(screen)
-                self.__door_button.render_button(screen)
+
+            if self.camera_x < 30:
+                self.__camera_button.render_button(screen)
         if (
             office_state is office_state.OFFICE_BACK_LIGHTS
             or office_state is office_state.OFFICE_BACK_LIGHTS_OPEN
         ):
             if self.camera_x == self.office.get_width() - self.__width:
-                self.__front_office_button.render_button(screen)
                 self.__window_button.render_button(screen)
+            if self.camera_x == 0:
+                self.__front_office_button.render_button(screen)

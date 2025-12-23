@@ -26,9 +26,11 @@ class OfficeButton(Button):
         self.__cam = cam
         self.__text = text
 
-    def render_button(self, screen: pygame.Surface):
+    def render_button(self, screen: pygame.Surface, scroll_x: int = 0):
+        draw_rect = self.__rect.copy()
+        draw_rect.x -= scroll_x
         if not self.__cam:
-            pygame.draw.rect(screen, self.__background, self.__rect)
+            pygame.draw.rect(screen, self.__background, draw_rect)
         else:
             # pygame.draw.rect(screen, self.__background, self.__rect)
             # pygame.draw.rect(
@@ -41,14 +43,14 @@ class OfficeButton(Button):
             #        self.__rect.height - 10,
             #    ),
             # )
-            pygame.draw.rect(screen, self.__background, self.__rect, 5)
+            pygame.draw.rect(screen, self.__background, draw_rect, 5)
             text = Text(screen)
             text.renderText(
                 self.__text,
                 "white",
                 (
-                    self.__rect.x + self.__rect.width / 2,
-                    self.__rect.y + self.__rect.height / 2,
+                    draw_rect.x + draw_rect.width / 2,
+                    draw_rect.y + draw_rect.height / 2,
                 ),
                 True,
             )
@@ -71,13 +73,15 @@ class OfficeButton(Button):
     def change_state(self):
         self.__state = not self.__state
 
-    def mouse_click_handler(self, mouse_position: tuple) -> bool:
-        if mouse_position[0] < self._x:
+    def mouse_click_handler(self, mouse_position: tuple, scroll_x: int = 0) -> bool:
+        map_mouse_x = mouse_position[0] + scroll_x
+        map_mouse_y = mouse_position[1]
+        if map_mouse_x < self._x:
             return False
-        if mouse_position[0] > self._x + self._width:
+        if map_mouse_x > self._x + self._width:
             return False
-        if mouse_position[1] < self._y:
+        if map_mouse_y < self._y:
             return False
-        if mouse_position[1] > self._y + self._height:
+        if map_mouse_y > self._y + self._height:
             return False
         return True

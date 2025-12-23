@@ -133,6 +133,9 @@ class MainGame:
                 return
 
     def new_office_event_handler(self, event):
+        max_scroll_x = self.office.office.get_width() - self.WIDTH
+        current_x = self.office.camera_x
+
         is_front = self.__office_state in [
             office_state.OFFICE_FRONT_LIGHTS,
             office_state.OFFICE_FRONT_LIGHTS_OPEN,
@@ -143,21 +146,26 @@ class MainGame:
         ]
         if is_front:
             # opening camera
-            if self.office.get_camera_button().mouse_click_handler(event.pos):
-                if self.bug_enemy.get_location() is camera_state.MAIN_HALLWAY_A:
-                    self.__camera_state = camera_state.MAIN_HALLWAY_A_BUG
-                else:
-                    self.__camera_state = camera_state.MAIN_HALLWAY_A
+            if current_x <= 30:
+                if self.office.get_camera_button().mouse_click_handler(event.pos):
+                    if self.bug_enemy.get_location() is camera_state.MAIN_HALLWAY_A:
+                        self.__camera_state = camera_state.MAIN_HALLWAY_A_BUG
+                    else:
+                        self.__camera_state = camera_state.MAIN_HALLWAY_A
 
             # turning around
-            if self.office.get_back_office_button().mouse_click_handler(event.pos):
-                if not self.__window_open:
-                    self.__office_state = office_state.OFFICE_BACK_LIGHTS
-                else:
-                    self.__office_state = office_state.OFFICE_BACK_LIGHTS_OPEN
+            if current_x >= max_scroll_x:
+                if self.office.get_back_office_button().mouse_click_handler(event.pos):
+                    if not self.__window_open:
+                        self.__office_state = office_state.OFFICE_BACK_LIGHTS
+                    else:
+                        self.__office_state = office_state.OFFICE_BACK_LIGHTS_OPEN
 
             # toggle door
-            if self.office.get_door_button().mouse_click_handler(event.pos):
+            if self.office.get_door_button().mouse_click_handler(
+                event.pos, scroll_x=current_x
+            ):
+                print("daaaa")
                 if not self.__door_open:
                     self.__office_state = office_state.OFFICE_FRONT_LIGHTS_OPEN
                     self.__door_open = True
@@ -165,18 +173,20 @@ class MainGame:
                     self.__office_state = office_state.OFFICE_FRONT_LIGHTS
                     self.__door_open = False
         if is_back:
-            if self.office.get_front_office_button().mouse_click_handler(event.pos):
-                if not self.__door_open:
-                    self.__office_state = office_state.OFFICE_FRONT_LIGHTS
-                else:
-                    self.__office_state = office_state.OFFICE_FRONT_LIGHTS_OPEN
-            if self.office.get_window_button().mouse_click_handler(event.pos):
-                if not self.__window_open:
-                    self.__office_state = office_state.OFFICE_BACK_LIGHTS_OPEN
-                    self.__window_open = True
-                else:
-                    self.__office_state = office_state.OFFICE_BACK_LIGHTS
-                    self.__window_open = False
+            if current_x == 0:
+                if self.office.get_front_office_button().mouse_click_handler(event.pos):
+                    if not self.__door_open:
+                        self.__office_state = office_state.OFFICE_FRONT_LIGHTS
+                    else:
+                        self.__office_state = office_state.OFFICE_FRONT_LIGHTS_OPEN
+            if current_x >= max_scroll_x:
+                if self.office.get_window_button().mouse_click_handler(event.pos):
+                    if not self.__window_open:
+                        self.__office_state = office_state.OFFICE_BACK_LIGHTS_OPEN
+                        self.__window_open = True
+                    else:
+                        self.__office_state = office_state.OFFICE_BACK_LIGHTS
+                        self.__window_open = False
 
     def new_update_image(self, screen):
         if self.__camera_state is not camera_state.NONE:
