@@ -156,6 +156,7 @@ class MainGame:
             # turning around
             if current_x >= max_scroll_x:
                 if self.office.get_back_office_button().mouse_click_handler(event.pos):
+                    self.office.camera_x = 0
                     if not self.__window_open:
                         self.__office_state = office_state.OFFICE_BACK_LIGHTS
                     else:
@@ -175,6 +176,10 @@ class MainGame:
         if is_back:
             if current_x == 0:
                 if self.office.get_front_office_button().mouse_click_handler(event.pos):
+                    self.office.camera_x = (
+                        self.office.front_office_lights_background.get_image().get_width()
+                        - self.WIDTH
+                    )
                     if not self.__door_open:
                         self.__office_state = office_state.OFFICE_FRONT_LIGHTS
                     else:
@@ -282,18 +287,21 @@ class MainGame:
             self.update_bug_camera()
             if self.__window_open:
                 self.oxygen.update()
-            clock_text.renderText(
-                self.__clock.get_hour_text() + " AM",
-                "white",
-                (self.WIDTH - 100, 40),
-                True,
-            )
 
-            ammo_text.renderText("Oxygen Meter:", "white", (self.WIDTH - 230, 70))
-            self.oxygen.render_bar(screen, self.WIDTH - 230, 100)
-            ammo_count = self.spray.current_uses
-            color = "white" if ammo_count > 0 else "red"
-            ammo_text.renderText(f"Spray: {ammo_count}", color, (230, self.HEIGHT - 50))
+            if self.__camera_state is camera_state.NONE:
+                clock_text.renderText(
+                    self.__clock.get_hour_text() + " AM",
+                    "white",
+                    (self.WIDTH - 100, 40),
+                    True,
+                )
+                ammo_text.renderText("Oxygen Meter:", "white", (20, self.HEIGHT - 70))
+                self.oxygen.render_bar(screen, 10, self.HEIGHT - 40)
+                ammo_count = self.spray.current_uses
+                color = "white" if ammo_count > 0 else "red"
+                ammo_text.renderText(
+                    f"Spray: {ammo_count}", color, (20, self.HEIGHT - 100)
+                )
             pygame.display.flip()
             framerate_clock.tick(60)
             self.__clock.update()
