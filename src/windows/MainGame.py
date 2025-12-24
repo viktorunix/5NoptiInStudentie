@@ -66,12 +66,12 @@ class MainGame:
         self, screen: pygame.Surface, clock: pygame.time.Clock, new_game: bool = False
     ):
         loaded = False
-        font = pygame.font.Font(None, 74)
+        #font = pygame.font.Font(None, self.HEIGHT // 10)
         if not new_game:
             self.loaded_state = stateLoader.load_state()
         else:
             self.loaded_state = stateLoader.new_state()
-        text = Text.Text(screen, None, 74)
+        text = Text.Text(screen, None, self.HEIGHT // 10)
         while not loaded:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -83,7 +83,7 @@ class MainGame:
             text.renderText(
                 "Night " + str(self.loaded_state["night"]),
                 "white",
-                (self.WIDTH / 2, self.HEIGHT / 2 / 2),
+                (self.WIDTH / 2, self.HEIGHT / 3),
                 True,
             )
             pygame.display.flip()

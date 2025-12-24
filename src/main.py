@@ -20,8 +20,14 @@ def main():
     pygame.mixer.init()
 
     # Screen setup
-    WIDTH, HEIGHT = 1280, 720
-    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    # WIDTH, HEIGHT = 1280, 720
+    info = pygame.display.Info()
+    WIDTH = info.current_w
+    HEIGHT = info.current_h
+    screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
+    clock = pygame.time.Clock()
+    clock = pygame.time.Clock()
+    clock = pygame.time.Clock()
     pygame.display.set_caption("5 Nopti In Studentie")
 
     # Clock

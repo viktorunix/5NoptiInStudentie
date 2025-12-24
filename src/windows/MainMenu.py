@@ -34,11 +34,11 @@ class MainMenu:
         self.bugimage.set_alpha(180)
         self.bugimage = pygame.transform.scale(
             self.bugimage,
-            (self.bugimage.get_width() * 2, self.bugimage.get_height() * 2),
+            (self.bugimage.get_width() * (self.HEIGHT / 360), self.bugimage.get_height() * (self.HEIGHT / 360)),
         )
 
-        self.buttons.append(Button((250, 50), (50, 350 + 74 / 2), self.event_test))
-        self.buttons.append(Button((200, 50), (50, 450 + 74 / 2), self.event_test_altu))
+        self.buttons.append(Button((self.WIDTH / 4, self.HEIGHT / 18), (self.WIDTH / 25, self.HEIGHT / 2 + self.HEIGHT / 16), self.event_test))
+        self.buttons.append(Button((self.WIDTH / 5, self.HEIGHT / 18), (self.WIDTH / 25, self.HEIGHT / 2 + self.HEIGHT / 6), self.event_test_altu))
 
         self.sound = pygame.mixer.Sound(self.script_dir + "/assets/audio/mainmenu.mp3")
 
@@ -64,7 +64,8 @@ class MainMenu:
         )
         self.another_channel = pygame.mixer.find_channel()
         self.another_channel.play(easter_egg_sound)
-        text = Text.Text(screen, None, 45)
+        fontSize = self.HEIGHT // 15
+        text = Text.Text(screen, None, fontSize)
         is_enter: bool = False
         while not loaded:
             for event in pygame.event.get():
@@ -84,16 +85,16 @@ class MainMenu:
                 image = pygame.transform.scale(image, (self.WIDTH, self.HEIGHT))
                 image.set_alpha(120)
                 screen.blit(image, (0, 0))
-                font = pygame.font.Font(None, 30)
+                # font = pygame.font.Font(None, self.HEIGHT // 20)
             except Exception as e:
                 print("Warning screen background image not found")
             text.renderText(
-                "ATENTIE!!", "red", (self.WIDTH / 2, self.HEIGHT / 2 - 200), True
+                "ATENTIE!!", "red", (self.WIDTH / 2, self.HEIGHT / 2 - 2 * fontSize), True
             )
             text.renderText(
                 "Acest joc este o parodie si trebuie tratat ca atare",
                 "white",
-                (self.WIDTH / 2, self.HEIGHT / 2 - 50),
+                (self.WIDTH / 2, self.HEIGHT / 2 - fontSize),
                 True,
             )
             text.renderText(
@@ -105,13 +106,13 @@ class MainMenu:
             text.renderText(
                 "Prin continuare sunteti de acord cu cele spuse de mai sus",
                 "white",
-                (self.WIDTH / 2, self.HEIGHT / 2 + 50),
+                (self.WIDTH / 2, self.HEIGHT / 2 + fontSize),
                 True,
             )
             text.renderText(
                 "Apasati tasta Enter pentru a continua",
                 "white",
-                (self.WIDTH / 2, self.HEIGHT / 2 + 200),
+                (self.WIDTH / 2, self.HEIGHT / 2 + 3 * fontSize),
                 True,
             )
             pygame.display.flip()
@@ -129,7 +130,8 @@ class MainMenu:
 
     def renderMainMenu(self, screen: Surface, clock: Clock):
         self.channel.play(self.sound, -1)
-        text = Text.Text(screen, None, 74)
+        fontSize = self.HEIGHT // 10
+        text = Text.Text(screen, None, fontSize)
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -141,21 +143,24 @@ class MainMenu:
             if not ret:
                 self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
                 continue
+            frame = cv2.resize(frame, (self.WIDTH, self.HEIGHT))
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             frame = pygame.surfarray.make_surface(frame.swapaxes(0, 1))
             screen.blit(frame, (0, 0))
-            font = pygame.font.Font(None, 74)
-            text.renderText("Cinci", "white", (50, 50))
-            text.renderText("Nopti", "white", (50, 100))
-            text.renderText("In", "white", (50, 150))
-            text.renderText("Studentie", "white", (50, 200))
+            # font = pygame.font.Font(None, self.WIDTH // 10)
+            horizontalOffset = self.WIDTH / 25
+            verticalOffset = self.HEIGHT / 20
+            text.renderText("Cinci", "white", (horizontalOffset, verticalOffset))
+            text.renderText("Nopti", "white", (horizontalOffset, verticalOffset + fontSize * 0.75))
+            text.renderText("In", "white", (horizontalOffset, verticalOffset + fontSize * 1.5))
+            text.renderText("Studentie", "white", (horizontalOffset, verticalOffset + fontSize * 2.25))
 
-            text.renderText("New Game", "white", (50, 350 + 74 / 2))
-            text.renderText("Continue", "white", (50, 450 + 74 / 2))
+            text.renderText("New Game", "white", (horizontalOffset, self.HEIGHT / 2 + self.HEIGHT / 16))
+            text.renderText("Continue", "white", (horizontalOffset, self.HEIGHT / 2 + self.HEIGHT / 6))
 
-            screen.blit(self.bugimage, (700, -200))
+            screen.blit(self.bugimage, (self.WIDTH / 2, -self.HEIGHT / 10))
 
-            text.renderText("ALPHA 3", pygame.Color("white"), (1030, 680))
+            text.renderText("ALPHA 3", pygame.Color("white"), (self.WIDTH * 20 / 25, self.HEIGHT * 23 / 25))
             # self.renderButtons(screen)
             pygame.display.flip()
             clock.tick(60)
