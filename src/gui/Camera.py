@@ -24,51 +24,54 @@ class Camera:
             self.camera, (new_width * 1.50, self.__height)
         )
         self.__office_button = OfficeButton(
-            pygame.Color("red"), self.__width - 600, self.__height - 120, 500, 100
+            pygame.Color("red"), self.__width / 4, self.__height * 9 / 10, self.__width / 2, self.__height / 20
         )
-
+        horizontalOffset = self.__width * 2 / 3
+        verticalOffset = self.__height * 4 / 5
+        horizontalSize = self.__width / 28
+        verticalSize = self.__height / 20
         self.__bath_hallway_button = OfficeButton(
             pygame.Color("white"),
-            self.__width - 1000,
-            self.__height - 300,
-            80,
-            80,
+            horizontalOffset,
+            verticalOffset,
+            horizontalSize,
+            verticalSize,
             cam=True,
             text="1A",
         )
         self.__main_hallway_a_button = OfficeButton(
             pygame.Color("white"),
-            self.__width - 850,
-            self.__height - 300,
-            80,
-            80,
+            horizontalOffset + 2 * horizontalSize,
+            verticalOffset,
+            horizontalSize,
+            verticalSize,
             cam=True,
             text="2A",
         )
         self.__main_hallway_office_button = OfficeButton(
             pygame.Color("white"),
-            self.__width - 700,
-            self.__height - 300,
-            80,
-            80,
+            horizontalOffset + 3.5 * horizontalSize,
+            verticalOffset,
+            horizontalSize,
+            verticalSize,
             cam=True,
             text="2B",
         )
         self.__main_hallway_b_button = OfficeButton(
             pygame.Color("white"),
-            self.__width - 550,
-            self.__height - 300,
-            80,
-            80,
+            horizontalOffset + 5 * horizontalSize,
+            verticalOffset,
+            horizontalSize,
+            verticalSize,
             cam=True,
             text="2C",
         )
         self.__staircase_button = OfficeButton(
             pygame.Color("white"),
-            self.__width - 400,
-            self.__height - 300,
-            80,
-            80,
+            horizontalOffset + 7 * horizontalSize,
+            verticalOffset,
+            horizontalSize,
+            verticalSize,
             cam=True,
             text="3A",
         )
@@ -133,39 +136,45 @@ class Camera:
     def render_camera(self, screen, camera_state):
         screen.blit(self.camera, (0, 0))
         self.static_update(screen)
+
+        horizontalOffset = self.__width * 2 / 3
+        verticalOffset = self.__height * 4 / 5
+        horizontalSize = self.__width / 28
+        verticalSize = self.__height / 20
+
         # main hallway
         pygame.draw.rect(
             screen,
             pygame.Color("white"),
-            (self.__width - 850, self.__height - 330, 400, 140),
+            (horizontalOffset + horizontalSize * 1.75, verticalOffset - verticalSize / 4, horizontalSize * 4.5, verticalSize * 1.5),
             2,
         )
         # bathroom hallway
         pygame.draw.rect(
             screen,
             pygame.Color("white"),
-            (self.__width - 1050, self.__height - 310, 150, 100),
+            (horizontalOffset - horizontalSize * 0.25, verticalOffset - verticalSize / 4, horizontalSize * 1.5, verticalSize * 1.5),
             2,
         )
         # staircase
         pygame.draw.rect(
             screen,
             pygame.Color("white"),
-            (self.__width - 400, self.__height - 335, 100, 150),
+            (horizontalOffset + horizontalSize * 6.75, verticalOffset - verticalSize / 4, horizontalSize * 1.5, verticalSize * 1.5),
             2,
         )
-        pygame.draw.rect(
+        """pygame.draw.rect(
             screen,
             pygame.Color("white"),
             (self.__width - 900, self.__height - 280, 50, 30),
             2,
-        )
-        pygame.draw.rect(
+        )"""
+        """pygame.draw.rect(
             screen,
             pygame.Color("white"),
             (self.__width - 450, self.__height - 280, 50, 30),
             2,
-        )
+        )"""
         self.__office_button.render_button(screen)
         self.__main_hallway_a_button.render_button(screen)
         self.__bath_hallway_button.render_button(screen)
@@ -178,6 +187,7 @@ class Camera:
         if not ret:
             self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
             ret, frame = self.cap.read()
+        frame = cv2.resize(frame, (self.__width, self.__height))
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         frame = pygame.surfarray.make_surface(frame.swapaxes(0, 1))
         frame.set_alpha(64)

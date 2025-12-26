@@ -22,24 +22,25 @@ class Office:
         self.scroll_speed = 40
         # TODO: trebuie schimbat liniile astea
         self.__camera_button = OfficeButton(
-            pygame.Color("red"), self.__width / 2 - 350, self.__height - 50, 700, 70
+            pygame.Color("red"), self.__width / 4, self.__height * 9 / 10, self.__width / 2, self.__height / 20
         )
         self.__back_office_button = OfficeButton(
-            pygame.Color("red"), self.__width - 120, self.__height - 700, 70, 250
+            pygame.Color("red"), self.__width * 17 / 18, self.__height / 4, self.__width / 30, self.__height / 2
         )
+        # What is this???
         self.__laptop_button = OfficeButton(
             pygame.Color("red"), 100, self.__height - 50, 400, 70
         )
         self.__door_button = OfficeButton(
-            (255, 0, 0, 255), self.__width / 2 + 400, 200, 50, 50
+            pygame.Color("red"), self.__width * 17 / 18, self.__height / 4, self.__width / 30, self.__height / 20
         )
         self.__front_office_button = OfficeButton(
-            pygame.Color("red"), 50, self.__height - 700, 70, 250
+            pygame.Color("red"), self.__width / 45, self.__height / 4, self.__width / 30, self.__height / 2
         )
         self.__front_office_button.change_state()
 
         self.__window_button = OfficeButton(
-            pygame.Color("red"), self.__width - 150, 100, 100, 100
+            pygame.Color("red"), self.__width * 9 / 10, self.__height / 4, self.__width / 30, self.__height / 20
         )
         run = True
         clock = pygame.time.Clock()
