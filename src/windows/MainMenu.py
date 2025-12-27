@@ -140,11 +140,13 @@ class MainMenu:
         self.channel.stop()
         mainGame = MainGame(self.WIDTH, self.HEIGHT, self.script_dir)
         mainGame.loadingScreen(screen, clock, True)
+        self.channel.play(self.sound, -1)
 
     def event_test_altu(self, screen, clock):
         self.channel.stop()
         mainGame = MainGame(self.WIDTH, self.HEIGHT, self.script_dir)
         mainGame.loadingScreen(screen, clock)
+        self.channel.play(self.sound, -1)
 
     def renderMainMenu(self, screen: Surface, clock: Clock):
         self.channel.play(self.sound, -1)

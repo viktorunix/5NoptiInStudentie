@@ -16,6 +16,7 @@ class BigBug:
         self.move_timer = 0
         self.move_interval = 300  # 300 ticks or 5 seconds
         self.sound = pygame.mixer.Sound(script_dir + "/assets/audio/bug_repelled.mp3")
+        self.jumpscare = False
         # the path of the bug current_location->list of possible locations
 
         self.path_network = {
@@ -53,6 +54,7 @@ class BigBug:
             self.location = next_room
 
             if self.location == camera_state.NONE:
+                self.jumpscare = True
                 self.trigger_jumpscare()
 
     def trigger_jumpscare(self):

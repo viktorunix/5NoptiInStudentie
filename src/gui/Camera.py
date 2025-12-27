@@ -196,6 +196,7 @@ class Camera:
             ),
             2,
         )
+
         """pygame.draw.rect(
             screen,
             pygame.Color("white"),

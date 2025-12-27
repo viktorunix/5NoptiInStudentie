@@ -15,6 +15,12 @@ class clock:
     def get_minutes(self):
         return self.__minutes
 
+    def set_minutes(self, minutes: int):
+        self.__minutes = minutes
+
+    def set_seconds(self, seconds: int):
+        self.__seconds = seconds
+
     def update(self):
         self.__ticks += 1
         if self.__ticks == 60:

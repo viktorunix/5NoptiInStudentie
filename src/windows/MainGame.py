@@ -13,6 +13,8 @@ from mechanics.spray import spray
 from utils.camera_state import camera_state
 from utils.office_state import office_state
 from utils.stateLoader import stateLoader
+from windows.game_over import game_over
+from windows.night_pass import night_pass
 
 
 class MainGame:
@@ -246,6 +248,23 @@ class MainGame:
                 self.cam_glitch_sound.play()
                 self.__camera_state = required_location
 
+    def check_game_over(self, screen: pygame.Surface) -> bool:
+        if self.bug_enemy.jumpscare:
+            pygame.mixer.music.stop()
+            gm = game_over(screen, (self.WIDTH, self.HEIGHT), self.script_dir)
+            gm.update(screen)
+            return True
+        return False
+
+    def check_night_passed(self, screen: pygame.Surface) -> bool:
+        if self.__clock.get_minutes() == 6:
+            pygame.mixer.music.stop()
+            stateLoader.advance_night(self.loaded_state)
+            np = night_pass(screen, (self.WIDTH, self.HEIGHT), self.script_dir)
+            np.update(screen)
+            return True
+        return False
+
     def handle_spray_mechanic(self):
         if self.game_over:
             return
@@ -273,6 +292,7 @@ class MainGame:
         pygame.mixer.music.load(self.script_dir + "/assets/audio/office_background.mp3")
         pygame.mixer.music.set_volume(0.05)
         pygame.mixer.music.play(loops=-1, start=0.0)
+
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -292,6 +312,10 @@ class MainGame:
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                     self.handle_spray_mechanic()
 
+            if self.check_game_over(screen):
+                break
+            if self.check_night_passed(screen):
+                break
             self.new_update_image(screen)
             self.bug_enemy.update()
             self.spray.update()
