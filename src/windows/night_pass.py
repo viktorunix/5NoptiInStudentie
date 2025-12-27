@@ -10,7 +10,6 @@ class night_pass:
         self, screen: pygame.Surface, screen_dimensions: tuple, script_dir: str
     ):
         print("night pass lol what do you expect")
-        self.title = Text(screen, fontSize=120)
         self.screen_dimensions = screen_dimensions
         self.clock = clock()
         self.sound = pygame.mixer.Sound(script_dir + "/assets/audio/night_pass.mp3")
@@ -38,12 +37,7 @@ class night_pass:
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                     running = False
-            self.title.renderText(
-                "AM",
-                "white",
-                (self.screen_dimensions[0] / 2, self.screen_dimensions[1] / 2),
-                True,
-            )
+
             print("testing")
             pygame.display.flip()
             self.clock.update()

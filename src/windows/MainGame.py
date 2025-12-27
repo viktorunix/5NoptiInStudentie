@@ -250,6 +250,7 @@ class MainGame:
 
     def check_game_over(self, screen: pygame.Surface) -> bool:
         if self.bug_enemy.jumpscare:
+            pygame.mixer.music.stop()
             gm = game_over(screen, (self.WIDTH, self.HEIGHT), self.script_dir)
             gm.update(screen)
             return True
@@ -257,6 +258,7 @@ class MainGame:
 
     def check_night_passed(self, screen: pygame.Surface) -> bool:
         if self.__clock.get_minutes() == 6:
+            pygame.mixer.music.stop()
             stateLoader.advance_night(self.loaded_state)
             np = night_pass(screen, (self.WIDTH, self.HEIGHT), self.script_dir)
             np.update(screen)
