@@ -1,17 +1,21 @@
 import random
 
+import pygame
+
 from mechanics.clock import clock
 from utils.camera_state import camera_state
 
 
 class BigBug:
-    def __init__(self, name: str, start_pos: camera_state, ai_level: int):
+    def __init__(
+        self, name: str, start_pos: camera_state, ai_level: int, script_dir: str
+    ):
         self.name = name
         self.location = start_pos
         self.ai_level = ai_level
         self.move_timer = 0
         self.move_interval = 300  # 300 ticks or 5 seconds
-
+        self.sound = pygame.mixer.Sound(script_dir + "/assets/audio/bug_repelled.mp3")
         # the path of the bug current_location->list of possible locations
 
         self.path_network = {
@@ -61,6 +65,7 @@ class BigBug:
         return self.location
 
     def force_retreat(self, target_room: camera_state):
+        self.sound.play()
         print(f"[{self.name}] REPELLED! Moved back to {target_room}")
         self.location = target_room
         self.move_timer = 0

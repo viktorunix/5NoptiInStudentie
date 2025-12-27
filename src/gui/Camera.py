@@ -14,17 +14,30 @@ class Camera:
         self.__width = screen_dimension[0]
         self.__height = screen_dimension[1]
         self.__script_dir = script_dir
+        self.cam_close_sound = pygame.mixer.Sound(
+            script_dir + "/assets/audio/cam_close.mp3"
+        )
         # TODO: add image to import in game
         self.camera = pygame.image.load(
             script_dir + "/assets/images/main_hallway_a.jpg"
         )
+
+        self.cam_switch_sound = pygame.mixer.Sound(
+            script_dir + "/assets/audio/cam_switch.mp3"
+        )
+
         scale_factor = self.__height / self.camera.get_height()
         new_width = int(self.camera.get_width() * scale_factor)
         self.camera = pygame.transform.scale(
             self.camera, (new_width * 1.50, self.__height)
         )
         self.__office_button = OfficeButton(
-            pygame.Color("red"), self.__width / 4, self.__height * 9 / 10, self.__width / 2, self.__height / 20
+            pygame.Color("red"),
+            self.__width / 4,
+            self.__height * 9 / 10,
+            self.__width / 2,
+            self.__height / 20,
+            sound=self.cam_close_sound,
         )
         horizontalOffset = self.__width * 2 / 3
         verticalOffset = self.__height * 4 / 5
@@ -38,6 +51,7 @@ class Camera:
             verticalSize,
             cam=True,
             text="1A",
+            sound=self.cam_switch_sound,
         )
         self.__main_hallway_a_button = OfficeButton(
             pygame.Color("white"),
@@ -47,6 +61,7 @@ class Camera:
             verticalSize,
             cam=True,
             text="2A",
+            sound=self.cam_switch_sound,
         )
         self.__main_hallway_office_button = OfficeButton(
             pygame.Color("white"),
@@ -56,6 +71,7 @@ class Camera:
             verticalSize,
             cam=True,
             text="2B",
+            sound=self.cam_switch_sound,
         )
         self.__main_hallway_b_button = OfficeButton(
             pygame.Color("white"),
@@ -65,6 +81,7 @@ class Camera:
             verticalSize,
             cam=True,
             text="2C",
+            sound=self.cam_switch_sound,
         )
         self.__staircase_button = OfficeButton(
             pygame.Color("white"),
@@ -74,6 +91,7 @@ class Camera:
             verticalSize,
             cam=True,
             text="3A",
+            sound=self.cam_switch_sound,
         )
         self.staircase_background = image(
             script_dir + "/assets/images/staircase.jpg", screen_dimension, 1
@@ -146,21 +164,36 @@ class Camera:
         pygame.draw.rect(
             screen,
             pygame.Color("white"),
-            (horizontalOffset + horizontalSize * 1.75, verticalOffset - verticalSize / 4, horizontalSize * 4.5, verticalSize * 1.5),
+            (
+                horizontalOffset + horizontalSize * 1.75,
+                verticalOffset - verticalSize / 4,
+                horizontalSize * 4.5,
+                verticalSize * 1.5,
+            ),
             2,
         )
         # bathroom hallway
         pygame.draw.rect(
             screen,
             pygame.Color("white"),
-            (horizontalOffset - horizontalSize * 0.25, verticalOffset - verticalSize / 4, horizontalSize * 1.5, verticalSize * 1.5),
+            (
+                horizontalOffset - horizontalSize * 0.25,
+                verticalOffset - verticalSize / 4,
+                horizontalSize * 1.5,
+                verticalSize * 1.5,
+            ),
             2,
         )
         # staircase
         pygame.draw.rect(
             screen,
             pygame.Color("white"),
-            (horizontalOffset + horizontalSize * 6.75, verticalOffset - verticalSize / 4, horizontalSize * 1.5, verticalSize * 1.5),
+            (
+                horizontalOffset + horizontalSize * 6.75,
+                verticalOffset - verticalSize / 4,
+                horizontalSize * 1.5,
+                verticalSize * 1.5,
+            ),
             2,
         )
         """pygame.draw.rect(
