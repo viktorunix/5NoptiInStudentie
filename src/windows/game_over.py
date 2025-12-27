@@ -6,7 +6,12 @@ from mechanics.clock import clock
 
 class game_over:
     def __init__(
-        self, screen: pygame.Surface, screen_dimensions: tuple, script_dir: str
+        self,
+        screen: pygame.Surface,
+        screen_dimensions: tuple,
+        script_dir: str,
+        message: str,
+        tip: str,
     ):
         self.title = Text(screen, fontSize=120)
         self.screen_dimensions = screen_dimensions
@@ -18,6 +23,8 @@ class game_over:
         )
 
         self.clock = clock()
+        self.message = message
+        self.tip = tip
 
     def update(self, screen: pygame.Surface):
         framerate_clock = pygame.time.Clock()
@@ -39,13 +46,13 @@ class game_over:
                 True,
             )
             self.description.renderText(
-                "Cand gandacul mare este langa usa ta,",
+                self.message,
                 "white",
                 (self.screen_dimensions[0] / 2, self.screen_dimensions[1] / 2),
                 True,
             )
             self.description.renderText(
-                "deschide usa si da cu spray ca sa il alungi",
+                self.tip,
                 "white",
                 (
                     self.screen_dimensions[0] / 2,
