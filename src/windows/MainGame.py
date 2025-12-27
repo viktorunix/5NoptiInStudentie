@@ -13,6 +13,7 @@ from mechanics.spray import spray
 from utils.camera_state import camera_state
 from utils.office_state import office_state
 from utils.stateLoader import stateLoader
+from windows.game_over import game_over
 
 
 class MainGame:
@@ -246,6 +247,19 @@ class MainGame:
                 self.cam_glitch_sound.play()
                 self.__camera_state = required_location
 
+    def check_game_over(self, screen: pygame.Surface) -> bool:
+        if self.bug_enemy.jumpscare:
+            gm = game_over(screen, (self.WIDTH, self.HEIGHT), self.script_dir)
+            gm.update(screen)
+            return True
+        return False
+
+    def check_night_passed(self) -> bool:
+        if self.__clock.get_minutes() == 6:
+            stateLoader.advance_night(self.loaded_state)
+            return True
+        return False
+
     def handle_spray_mechanic(self):
         if self.game_over:
             return
@@ -292,6 +306,10 @@ class MainGame:
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                     self.handle_spray_mechanic()
 
+            if self.check_game_over(screen):
+                break
+            if self.check_night_passed():
+                break
             self.new_update_image(screen)
             self.bug_enemy.update()
             self.spray.update()
