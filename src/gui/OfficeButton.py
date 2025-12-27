@@ -17,6 +17,7 @@ class OfficeButton(Button):
         target: Callable = None,
         text: str = "",
         cam: bool = False,
+        sound=None,
     ):
         super().__init__((width, height), (x, y), target)
         # self.__image = pygame.image.load("da")
@@ -25,6 +26,7 @@ class OfficeButton(Button):
         self.__state = True
         self.__cam = cam
         self.__text = text
+        self.__sound = sound
 
     def render_button(self, screen: pygame.Surface, scroll_x: int = 0):
         draw_rect = self.__rect.copy()
@@ -84,4 +86,6 @@ class OfficeButton(Button):
             return False
         if map_mouse_y > self._y + self._height:
             return False
+        if self.__sound:
+            self.__sound.play()
         return True

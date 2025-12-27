@@ -20,27 +20,53 @@ class Office:
         self.office_width = self.office.get_width()
         self.camera_x = 0
         self.scroll_speed = 40
+
+        self.cam_open_sound = pygame.mixer.Sound(
+            script_dir + "/assets/audio/cam_open.mp3"
+        )
+
         # TODO: trebuie schimbat liniile astea
         self.__camera_button = OfficeButton(
-            pygame.Color("red"), self.__width / 4, self.__height * 9 / 10, self.__width / 2, self.__height / 20
+            pygame.Color("red"),
+            self.__width / 4,
+            self.__height * 9 / 10,
+            self.__width / 2,
+            self.__height / 20,
+            sound=self.cam_open_sound,
         )
         self.__back_office_button = OfficeButton(
-            pygame.Color("red"), self.__width * 17 / 18, self.__height / 4, self.__width / 30, self.__height / 2
+            pygame.Color("red"),
+            self.__width * 17 / 18,
+            self.__height / 4,
+            self.__width / 30,
+            self.__height / 2,
         )
         # What is this???
         self.__laptop_button = OfficeButton(
             pygame.Color("red"), 100, self.__height - 50, 400, 70
         )
         self.__door_button = OfficeButton(
-            pygame.Color("red"), self.__width * 17 / 18, self.__height / 4, self.__width / 30, self.__height / 20
+            pygame.Color("red"),
+            self.__width * 17 / 18,
+            self.__height / 4,
+            self.__width / 30,
+            self.__height / 20,
         )
         self.__front_office_button = OfficeButton(
-            pygame.Color("red"), self.__width / 45, self.__height / 4, self.__width / 30, self.__height / 2
+            pygame.Color("red"),
+            self.__width / 45,
+            self.__height / 4,
+            self.__width / 30,
+            self.__height / 2,
         )
         self.__front_office_button.change_state()
 
         self.__window_button = OfficeButton(
-            pygame.Color("red"), self.__width * 9 / 10, self.__height / 4, self.__width / 30, self.__height / 20
+            pygame.Color("red"),
+            self.__width * 9 / 10,
+            self.__height / 4,
+            self.__width / 30,
+            self.__height / 20,
         )
         run = True
         clock = pygame.time.Clock()

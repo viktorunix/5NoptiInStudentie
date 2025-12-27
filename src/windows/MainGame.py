@@ -34,7 +34,7 @@ class MainGame:
         self.last_camera_state = None
         self.last_office_state = None
 
-        self.bug_enemy = BigBug("BigBug", camera_state.BATHROOM_HALLWAY, 10)
+        self.bug_enemy = BigBug("BigBug", camera_state.BATHROOM_HALLWAY, 10, script_dir)
         self.spray = spray(script_dir)
 
         self.oxygen = OxygenMeter(max_oxygen=100, regen_rate=0.05)
@@ -61,12 +61,35 @@ class MainGame:
             camera_state.MAIN_HALLWAY_B_BUG: self.camera.main_hallway_b_bug_background,
             camera_state.STAIRWAY_BUG: self.camera.staircase_bug_background,
         }
+        """this is used for updating the camera if the bug dissapears from screen"""
+        self.bug_view_map = {
+            camera_state.BATHROOM_HALLWAY_BUG: camera_state.BATHROOM_HALLWAY,
+            camera_state.MAIN_HALLWAY_A_BUG: camera_state.MAIN_HALLWAY_A,
+            camera_state.MAIN_HALLWAY_B_BUG: camera_state.MAIN_HALLWAY_B,
+            camera_state.MAIN_HALLWAY_OFFICE_BUG: camera_state.MAIN_HALLWAY_OFFICE,
+            camera_state.STAIRWAY_BUG: camera_state.STAIRWAY,
+        }
+        self.cam_glitch_sound = pygame.mixer.Sound(
+            script_dir + "/assets/audio/cam_glitch.mp3"
+        )
+        self.window_open_sound = pygame.mixer.Sound(
+            script_dir + "/assets/audio/window_open.mp3"
+        )
+        self.window_close_sound = pygame.mixer.Sound(
+            script_dir + "/assets/audio/window_close.mp3"
+        )
+        self.door_open_sound = pygame.mixer.Sound(
+            script_dir + "/assets/audio/door_open.mp3"
+        )
+        self.door_close_sound = pygame.mixer.Sound(
+            script_dir + "/assets/audio/door_close.mp3"
+        )
 
     def loadingScreen(
         self, screen: pygame.Surface, clock: pygame.time.Clock, new_game: bool = False
     ):
         loaded = False
-        #font = pygame.font.Font(None, self.HEIGHT // 10)
+        # font = pygame.font.Font(None, self.HEIGHT // 10)
         if not new_game:
             self.loaded_state = stateLoader.load_state()
         else:
@@ -168,9 +191,11 @@ class MainGame:
             ):
                 print("daaaa")
                 if not self.__door_open:
+                    self.door_open_sound.play()
                     self.__office_state = office_state.OFFICE_FRONT_LIGHTS_OPEN
                     self.__door_open = True
                 else:
+                    self.door_close_sound.play()
                     self.__office_state = office_state.OFFICE_FRONT_LIGHTS
                     self.__door_open = False
         if is_back:
@@ -187,9 +212,11 @@ class MainGame:
             if current_x >= max_scroll_x:
                 if self.office.get_window_button().mouse_click_handler(event.pos):
                     if not self.__window_open:
+                        self.window_open_sound.play()
                         self.__office_state = office_state.OFFICE_BACK_LIGHTS_OPEN
                         self.__window_open = True
                     else:
+                        self.window_close_sound.play()
                         self.__office_state = office_state.OFFICE_BACK_LIGHTS
                         self.__window_open = False
 
@@ -212,31 +239,12 @@ class MainGame:
 
     def update_bug_camera(self):
         """if the player is on the cam where the bug is but meanwhile the bug moves the player still sees it so this is why i wrote this function"""
-        if (
-            self.__camera_state is camera_state.BATHROOM_HALLWAY_BUG
-            and self.bug_enemy.get_location() is not camera_state.BATHROOM_HALLWAY
-        ):
-            self.__camera_state = camera_state.BATHROOM_HALLWAY
-        elif (
-            self.__camera_state is camera_state.MAIN_HALLWAY_A_BUG
-            and self.bug_enemy.get_location() is not camera_state.MAIN_HALLWAY_A
-        ):
-            self.__camera_state = camera_state.MAIN_HALLWAY_A
-        elif (
-            self.__camera_state is camera_state.MAIN_HALLWAY_B_BUG
-            and self.bug_enemy.get_location() is not camera_state.MAIN_HALLWAY_B
-        ):
-            self.__camera_state = camera_state.MAIN_HALLWAY_B
-        elif (
-            self.__camera_state is camera_state.MAIN_HALLWAY_OFFICE_BUG
-            and self.bug_enemy.get_location() is not camera_state.MAIN_HALLWAY_OFFICE
-        ):
-            self.__camera_state = camera_state.MAIN_HALLWAY_OFFICE
-        elif (
-            self.__camera_state is camera_state.STAIRWAY_BUG
-            and self.bug_enemy.get_location() is not camera_state.STAIRWAY
-        ):
-            self.__camera_state = camera_state.STAIRWAY
+
+        if self.__camera_state in self.bug_view_map:
+            required_location = self.bug_view_map[self.__camera_state]
+            if self.bug_enemy.get_location() is not required_location:
+                self.cam_glitch_sound.play()
+                self.__camera_state = required_location
 
     def handle_spray_mechanic(self):
         if self.game_over:
@@ -262,6 +270,9 @@ class MainGame:
         clock_text = Text.Text(screen)
         framerate_clock = pygame.time.Clock()
         ammo_text = Text.Text(screen, fontSize=30)
+        pygame.mixer.music.load(self.script_dir + "/assets/audio/office_background.mp3")
+        pygame.mixer.music.set_volume(0.05)
+        pygame.mixer.music.play(loops=-1, start=0.0)
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
