@@ -1,5 +1,6 @@
 import os
 from asyncio.unix_events import FastChildWatcher
+from sre_parse import HEXDIGITS
 
 import pygame
 
@@ -9,6 +10,7 @@ from gui.Office import Office
 from mechanics.BigBug import BigBug
 from mechanics.clock import clock
 from mechanics.OxygenMeter import OxygenMeter
+from mechanics.small_bugs import small_bugs
 from mechanics.spray import spray
 from utils.camera_state import camera_state
 from utils.office_state import office_state
@@ -38,6 +40,7 @@ class MainGame:
 
         self.bug_enemy = BigBug("BigBug", camera_state.BATHROOM_HALLWAY, 10, script_dir)
         self.spray = spray(script_dir)
+        self.small_bugs = small_bugs(30, 5)
 
         self.oxygen = OxygenMeter(max_oxygen=100, regen_rate=0.05)
         self.game_over = False
@@ -251,7 +254,45 @@ class MainGame:
     def check_game_over(self, screen: pygame.Surface) -> bool:
         if self.bug_enemy.jumpscare:
             pygame.mixer.music.stop()
-            gm = game_over(screen, (self.WIDTH, self.HEIGHT), self.script_dir)
+            if self.spray.current_uses != 0:
+                gm = game_over(
+                    screen,
+                    (self.WIDTH, self.HEIGHT),
+                    self.script_dir,
+                    "If the big bug is near your door",
+                    "open the door and use the spray to repell it",
+                )
+                gm.update(screen)
+            else:
+                gm = game_over(
+                    screen,
+                    (self.WIDTH, self.HEIGHT),
+                    self.script_dir,
+                    "The spray can has limited uses",
+                    "it should be use in critical moments or restock",
+                )
+                gm.update(screen)
+            return True
+        if self.oxygen.current_oxygen <= 0:
+            pygame.mixer.music.stop()
+            gm = game_over(
+                screen,
+                (self.WIDTH, self.HEIGHT),
+                self.script_dir,
+                "You suffocated from using too much spray",
+                "open the window to restore the oxygen level ",
+            )
+            gm.update(screen)
+            return True
+        if self.small_bugs.check_limit():
+            pygame.mixer.music.stop()
+            gm = game_over(
+                screen,
+                (self.WIDTH, self.HEIGHT),
+                self.script_dir,
+                "Too many bugs entered your room",
+                "dont let open doors or windows next time",
+            )
             gm.update(screen)
             return True
         return False
@@ -283,12 +324,20 @@ class MainGame:
                     self.game_over = True
                 if self.bug_enemy.get_location() is camera_state.MAIN_HALLWAY_OFFICE:
                     self.bug_enemy.force_retreat(camera_state.BATHROOM_HALLWAY)
+        else:
+            if self.spray.use_spray():
+                toxicity = self.spray.get_toxicity()
+                is_suffocating = self.oxygen.deplete(toxicity)
+                if is_suffocating:
+                    self.game_over = True
+                self.small_bugs.decrease_counter()
 
     def main_game(self, screen: pygame.Surface):
         """main gameloop"""
         clock_text = Text.Text(screen)
         framerate_clock = pygame.time.Clock()
         ammo_text = Text.Text(screen, fontSize=30)
+        small_bugs_text = Text.Text(screen, fontSize=30)
         pygame.mixer.music.load(self.script_dir + "/assets/audio/office_background.mp3")
         pygame.mixer.music.set_volume(0.05)
         pygame.mixer.music.play(loops=-1, start=0.0)
@@ -330,6 +379,14 @@ class MainGame:
                     (self.WIDTH - 100, 40),
                     True,
                 )
+                small_bugs_text.renderText(
+                    "Bugs in room "
+                    + str(self.small_bugs.current_bugs)
+                    + "/"
+                    + str(self.small_bugs.limit),
+                    "white",
+                    (20, self.HEIGHT - 130),
+                )
                 ammo_text.renderText("Oxygen Meter:", "white", (20, self.HEIGHT - 70))
                 self.oxygen.render_bar(screen, 10, self.HEIGHT - 40)
                 ammo_count = self.spray.current_uses
@@ -337,6 +394,17 @@ class MainGame:
                 ammo_text.renderText(
                     f"Spray: {ammo_count}", color, (20, self.HEIGHT - 100)
                 )
+
+            if (
+                self.__office_state is not office_state.OFFICE_BACK_LIGHTS_OPEN
+                and self.__window_open
+            ):
+                self.small_bugs.update()
+            if (
+                self.__office_state is not office_state.OFFICE_FRONT_LIGHTS_OPEN
+                or self.__camera_state is not camera_state.NONE
+            ) and self.__door_open:
+                self.small_bugs.update()
             pygame.display.flip()
             framerate_clock.tick(60)
             self.__clock.update()
