@@ -293,8 +293,6 @@ class MainGame:
         pygame.mixer.music.set_volume(0.05)
         pygame.mixer.music.play(loops=-1, start=0.0)
 
-        self.__clock.set_minutes(5)
-        self.__clock.set_seconds(57)
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
