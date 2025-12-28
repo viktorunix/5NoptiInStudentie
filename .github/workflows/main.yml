@@ -28,7 +28,7 @@ jobs:
         pyinstaller --name "CinciNoptiInStudentie" --noconsole --onefile --add-data "assets;assets" --add-data "state;state" src/main.py
 
     - name: Uploade Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: CinciNoptiInStudentie-Windows
         path: dis/CinciNoptiInStudentie.exe
