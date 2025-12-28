@@ -1,5 +1,7 @@
 import pygame
 
+from utils.stateLoader import get_resource_path
+
 
 class spray:
     def __init__(self, script_dir, max_uses=10):
@@ -9,7 +11,9 @@ class spray:
         self.max_uses = max_uses
         self.current_uses = max_uses
         try:
-            self.sound = pygame.mixer.Sound(script_dir + "/assets/audio/spray.mp3")
+            self.sound = pygame.mixer.Sound(
+                get_resource_path("/assets/audio/spray.mp3")
+            )
         except:
             self.sound = None
 

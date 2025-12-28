@@ -3,6 +3,7 @@ import pygame
 from gui.OfficeButton import OfficeButton
 from gui.Picture import image
 from utils.office_state import office_state
+from utils.stateLoader import get_resource_path
 
 
 class Office:
@@ -11,7 +12,7 @@ class Office:
         self.__height = screen_dimension[1]
         self.__script_dir = script_dir
         self.office = pygame.image.load(
-            script_dir + "/assets/images/office_front_lights.jpeg"
+            get_resource_path("/assets/images/office_front_lights.jpeg")
         )
         scale_factor = self.__height / self.office.get_height()
         new_width = int(self.office.get_width() * scale_factor)
@@ -22,7 +23,7 @@ class Office:
         self.scroll_speed = 40
 
         self.cam_open_sound = pygame.mixer.Sound(
-            script_dir + "/assets/audio/cam_open.mp3"
+            get_resource_path("/assets/audio/cam_open.mp3")
         )
 
         # TODO: trebuie schimbat liniile astea
@@ -71,21 +72,25 @@ class Office:
         run = True
         clock = pygame.time.Clock()
         self.front_office_lights_background = image(
-            script_dir + "/assets/images/office_front_lights.jpeg", screen_dimension, 1
+            get_resource_path("/assets/images/office_front_lights.jpeg"),
+            screen_dimension,
+            1,
         )
         print(screen_dimension)
         self.back_office_lights_background = image(
-            script_dir + "/assets/images/office_back_lights.jpg", screen_dimension, 1
+            get_resource_path("/assets/images/office_back_lights.jpg"),
+            screen_dimension,
+            1,
         )
 
         self.front_office_lights_open_background = image(
-            script_dir + "/assets/images/office_front_lights_open.jpg",
+            get_resource_path("/assets/images/office_front_lights_open.jpg"),
             screen_dimension,
             1,
         )
 
         self.back_office_lights_open_background = image(
-            script_dir + "/assets/images/office_back_lights_open.jpg",
+            get_resource_path("/assets/images/office_back_lights_open.jpg"),
             screen_dimension,
             1,
         )
