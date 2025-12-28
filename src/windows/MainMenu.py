@@ -198,7 +198,7 @@ class MainMenu:
             screen.blit(self.bugimage, (self.WIDTH / 2, -self.HEIGHT / 10))
 
             text.renderText(
-                "ALPHA 4",
+                "BETA 1",
                 pygame.Color("white"),
                 (self.WIDTH * 20 / 25, self.HEIGHT * 23 / 25),
             )

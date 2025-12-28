@@ -3,7 +3,7 @@ import pygame
 
 from gui.OfficeButton import OfficeButton
 from gui.Picture import image
-from utils.camera_state import camera_state
+from utils.game_state import camera_state
 from utils.stateLoader import get_resource_path
 
 
@@ -32,7 +32,7 @@ class Camera:
         self.camera = pygame.transform.scale(
             self.camera, (new_width * 1.50, self.__height)
         )
-        self.__office_button = OfficeButton(
+        self.office_button = OfficeButton(
             pygame.Color("red"),
             self.__width / 4,
             self.__height * 9 / 10,
@@ -44,7 +44,7 @@ class Camera:
         verticalOffset = self.__height * 4 / 5
         horizontalSize = self.__width / 28
         verticalSize = self.__height / 20
-        self.__bath_hallway_button = OfficeButton(
+        self.bath_hallway_button = OfficeButton(
             pygame.Color("white"),
             horizontalOffset,
             verticalOffset,
@@ -54,7 +54,7 @@ class Camera:
             text="1A",
             sound=self.cam_switch_sound,
         )
-        self.__main_hallway_a_button = OfficeButton(
+        self.main_hallway_a_button = OfficeButton(
             pygame.Color("white"),
             horizontalOffset + 2 * horizontalSize,
             verticalOffset,
@@ -64,7 +64,7 @@ class Camera:
             text="2A",
             sound=self.cam_switch_sound,
         )
-        self.__main_hallway_office_button = OfficeButton(
+        self.main_hallway_office_button = OfficeButton(
             pygame.Color("white"),
             horizontalOffset + 3.5 * horizontalSize,
             verticalOffset,
@@ -74,7 +74,7 @@ class Camera:
             text="2B",
             sound=self.cam_switch_sound,
         )
-        self.__main_hallway_b_button = OfficeButton(
+        self.main_hallway_b_button = OfficeButton(
             pygame.Color("white"),
             horizontalOffset + 5 * horizontalSize,
             verticalOffset,
@@ -84,7 +84,7 @@ class Camera:
             text="2C",
             sound=self.cam_switch_sound,
         )
-        self.__staircase_button = OfficeButton(
+        self.staircase_button = OfficeButton(
             pygame.Color("white"),
             horizontalOffset + 7 * horizontalSize,
             verticalOffset,
@@ -142,27 +142,9 @@ class Camera:
     def change_image(self, image):
         self.camera = image.get_image()
 
-    def get_office_button(self) -> OfficeButton:
-        return self.__office_button
-
-    def get_main_hallway_a_button(self) -> OfficeButton:
-        return self.__main_hallway_a_button
-
-    def get_bath_hallway_button(self) -> OfficeButton:
-        return self.__bath_hallway_button
-
-    def get_staircase_button(self) -> OfficeButton:
-        return self.__staircase_button
-
-    def get_main_hallway_b_button(self) -> OfficeButton:
-        return self.__main_hallway_b_button
-
-    def get_main_hallway_office_button(self) -> OfficeButton:
-        return self.__main_hallway_office_button
-
-    def render_camera(self, screen, camera_state):
+    def render_camera(self, screen, camera_state, alpha: int):
         screen.blit(self.camera, (0, 0))
-        self.static_update(screen)
+        self.static_update(screen, alpha)
 
         horizontalOffset = self.__width * 2 / 3
         verticalOffset = self.__height * 4 / 5
@@ -218,14 +200,14 @@ class Camera:
             (self.__width - 450, self.__height - 280, 50, 30),
             2,
         )"""
-        self.__office_button.render_button(screen)
-        self.__main_hallway_a_button.render_button(screen)
-        self.__bath_hallway_button.render_button(screen)
-        self.__main_hallway_b_button.render_button(screen)
-        self.__staircase_button.render_button(screen)
-        self.__main_hallway_office_button.render_button(screen)
+        self.office_button.render_button(screen)
+        self.main_hallway_a_button.render_button(screen)
+        self.bath_hallway_button.render_button(screen)
+        self.main_hallway_b_button.render_button(screen)
+        self.staircase_button.render_button(screen)
+        self.main_hallway_office_button.render_button(screen)
 
-    def static_update(self, screen: pygame.Surface):
+    def static_update(self, screen: pygame.Surface, alpha: int):
         ret, frame = self.cap.read()
         if not ret:
             self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
@@ -233,5 +215,5 @@ class Camera:
         frame = cv2.resize(frame, (self.__width, self.__height))
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         frame = pygame.surfarray.make_surface(frame.swapaxes(0, 1))
-        frame.set_alpha(64)
+        frame.set_alpha(alpha)
         screen.blit(frame, (0, 0))

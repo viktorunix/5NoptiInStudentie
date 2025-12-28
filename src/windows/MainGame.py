@@ -10,8 +10,7 @@ from mechanics.clock import clock
 from mechanics.OxygenMeter import OxygenMeter
 from mechanics.small_bugs import small_bugs
 from mechanics.spray import spray
-from utils.camera_state import camera_state
-from utils.office_state import office_state
+from utils.game_state import camera_state, office_state
 from utils.stateLoader import get_resource_path, stateLoader
 from windows.game_over import game_over
 from windows.night_pass import night_pass
@@ -26,13 +25,16 @@ class MainGame:
         self.office = Office((self.WIDTH, self.HEIGHT), self.script_dir)
         self.camera = Camera((self.WIDTH, self.HEIGHT), self.script_dir)
         self.ticks = 0
-        self.__camera_state: camera_state = camera_state.NONE
-        self.__office_state = office_state.OFFICE_FRONT_LIGHTS
-        self.__clock = clock()
-        self.__door_open: bool = False
-        self.__window_open: bool = False
-        self.__lights_on: bool = True
+        self.camera_state: camera_state = camera_state.NONE
+        self.office_state = office_state.OFFICE_FRONT
+        self.clock = clock()
+        self.door_open: bool = False
+        self.window_open: bool = False
+        self.lights_on: bool = True
 
+        self.cam_glitch_alpha = 70
+        self.cam_glitch_channel = pygame.mixer.Channel(0)
+        self.cam_glitch_message = ""
         self.last_camera_state = None
         self.last_office_state = None
 
@@ -44,12 +46,10 @@ class MainGame:
         self.game_over = False
 
         self.office_image_map = {
-            office_state.OFFICE_FRONT_LIGHTS: self.office.front_office_lights_background,
-            office_state.OFFICE_BACK_LIGHTS: self.office.back_office_lights_background,
-            office_state.OFFICE_FRONT_LIGHTS_OPEN: self.office.front_office_lights_open_background,
-            office_state.OFFICE_BACK_LIGHTS_OPEN: self.office.back_office_lights_open_background,
-            # office_state.OFFICE_FRONT_DARK: self.office.front_office_dark_background,
-            # office_state.OFFICE_BACK_DARK: self.office_back_office_dark_background
+            office_state.OFFICE_FRONT: self.office.office_front_background,
+            office_state.OFFICE_BACK: self.office.office_back_background,
+            office_state.OFFICE_FRONT_OPEN: self.office.office_front_open_background,
+            office_state.OFFICE_BACK_OPEN: self.office.office_back_open_background,
         }
 
         self.camera_image_map = {
@@ -118,33 +118,33 @@ class MainGame:
         self.main_game(screen)
 
     def camera_event_handler(self, event):
-        if self.camera.get_office_button().mouse_click_handler(event.pos):
-            self.__camera_state = camera_state.NONE
+        if self.camera.office_button.mouse_click_handler(event.pos):
+            self.camera_state = camera_state.NONE
             return
 
         cam_buttons = [
             (
-                self.camera.get_main_hallway_b_button(),
+                self.camera.main_hallway_b_button,
                 camera_state.MAIN_HALLWAY_B,
                 camera_state.MAIN_HALLWAY_B_BUG,
             ),
             (
-                self.camera.get_main_hallway_a_button(),
+                self.camera.main_hallway_a_button,
                 camera_state.MAIN_HALLWAY_A,
                 camera_state.MAIN_HALLWAY_A_BUG,
             ),
             (
-                self.camera.get_main_hallway_office_button(),
+                self.camera.main_hallway_office_button,
                 camera_state.MAIN_HALLWAY_OFFICE,
                 camera_state.MAIN_HALLWAY_OFFICE_BUG,
             ),
             (
-                self.camera.get_staircase_button(),
+                self.camera.staircase_button,
                 camera_state.STAIRWAY,
                 camera_state.STAIRWAY_BUG,
             ),
             (
-                self.camera.get_bath_hallway_button(),
+                self.camera.bath_hallway_button,
                 camera_state.BATHROOM_HALLWAY,
                 camera_state.BATHROOM_HALLWAY_BUG,
             ),
@@ -153,101 +153,114 @@ class MainGame:
         for button, normal_state, bug_state in cam_buttons:
             if button.mouse_click_handler(event.pos):
                 if current_bug_loc == normal_state:
-                    self.__camera_state = bug_state
+                    self.camera_state = bug_state
                 else:
-                    self.__camera_state = normal_state
+                    self.camera_state = normal_state
                 return
 
     def new_office_event_handler(self, event):
         max_scroll_x = self.office.office.get_width() - self.WIDTH
         current_x = self.office.camera_x
 
-        is_front = self.__office_state in [
-            office_state.OFFICE_FRONT_LIGHTS,
-            office_state.OFFICE_FRONT_LIGHTS_OPEN,
+        is_front = self.office_state in [
+            office_state.OFFICE_FRONT,
+            office_state.OFFICE_FRONT_OPEN,
         ]
-        is_back = self.__office_state in [
-            office_state.OFFICE_BACK_LIGHTS,
-            office_state.OFFICE_BACK_LIGHTS_OPEN,
+        is_back = self.office_state in [
+            office_state.OFFICE_BACK,
+            office_state.OFFICE_BACK_OPEN,
         ]
         if is_front:
             # opening camera
             if current_x <= 30:
-                if self.office.get_camera_button().mouse_click_handler(event.pos):
+                if self.office.camera_button.mouse_click_handler(event.pos):
                     if self.bug_enemy.get_location() is camera_state.MAIN_HALLWAY_A:
-                        self.__camera_state = camera_state.MAIN_HALLWAY_A_BUG
+                        self.camera_state = camera_state.MAIN_HALLWAY_A_BUG
                     else:
-                        self.__camera_state = camera_state.MAIN_HALLWAY_A
+                        self.camera_state = camera_state.MAIN_HALLWAY_A
 
             # turning around
             if current_x >= max_scroll_x:
-                if self.office.get_back_office_button().mouse_click_handler(event.pos):
+                if self.office.back_office_button.mouse_click_handler(event.pos):
                     self.office.camera_x = 0
-                    if not self.__window_open:
-                        self.__office_state = office_state.OFFICE_BACK_LIGHTS
+                    if not self.window_open:
+                        self.office_state = office_state.OFFICE_BACK
                     else:
-                        self.__office_state = office_state.OFFICE_BACK_LIGHTS_OPEN
+                        self.office_state = office_state.OFFICE_BACK_OPEN
 
             # toggle door
-            if self.office.get_door_button().mouse_click_handler(
+            if self.office.door_button.mouse_click_handler(
                 event.pos, scroll_x=current_x
             ):
                 print("daaaa")
-                if not self.__door_open:
+                if not self.door_open:
                     self.door_open_sound.play()
-                    self.__office_state = office_state.OFFICE_FRONT_LIGHTS_OPEN
-                    self.__door_open = True
+                    self.office_state = office_state.OFFICE_FRONT_OPEN
+                    self.door_open = True
                 else:
                     self.door_close_sound.play()
-                    self.__office_state = office_state.OFFICE_FRONT_LIGHTS
-                    self.__door_open = False
+                    self.office_state = office_state.OFFICE_FRONT
+                    self.door_open = False
         if is_back:
             if current_x == 0:
-                if self.office.get_front_office_button().mouse_click_handler(event.pos):
+                if self.office.front_office_button.mouse_click_handler(event.pos):
                     self.office.camera_x = (
-                        self.office.front_office_lights_background.get_image().get_width()
+                        self.office.office_front_background.get_image().get_width()
                         - self.WIDTH
                     )
-                    if not self.__door_open:
-                        self.__office_state = office_state.OFFICE_FRONT_LIGHTS
+                    if not self.door_open:
+                        self.office_state = office_state.OFFICE_FRONT
                     else:
-                        self.__office_state = office_state.OFFICE_FRONT_LIGHTS_OPEN
+                        self.office_state = office_state.OFFICE_FRONT_OPEN
             if current_x >= max_scroll_x:
-                if self.office.get_window_button().mouse_click_handler(event.pos):
-                    if not self.__window_open:
+                if self.office.window_button.mouse_click_handler(event.pos):
+                    if not self.window_open:
                         self.window_open_sound.play()
-                        self.__office_state = office_state.OFFICE_BACK_LIGHTS_OPEN
-                        self.__window_open = True
+                        self.office_state = office_state.OFFICE_BACK_OPEN
+                        self.window_open = True
                     else:
                         self.window_close_sound.play()
-                        self.__office_state = office_state.OFFICE_BACK_LIGHTS
-                        self.__window_open = False
+                        self.office_state = office_state.OFFICE_BACK
+                        self.window_open = False
 
     def new_update_image(self, screen):
-        if self.__camera_state is not camera_state.NONE:
-            if self.__camera_state is not self.last_camera_state:
-                target_img = self.camera_image_map.get(self.__camera_state)
+        if self.camera_state is not camera_state.NONE:
+            if self.camera_state is not self.last_camera_state:
+                target_img = self.camera_image_map.get(self.camera_state)
                 if target_img:
                     self.camera.change_image(target_img)
-                self.last_camera_state = self.__camera_state
-            self.camera.render_camera(screen, self.__camera_state)
+                self.last_camera_state = self.camera_state
+            self.camera.render_camera(screen, self.camera_state, self.cam_glitch_alpha)
 
         else:
-            if self.__office_state is not self.last_office_state:
-                target_img = self.office_image_map.get(self.__office_state)
+            if self.office_state is not self.last_office_state:
+                target_img = self.office_image_map.get(self.office_state)
                 if target_img:
                     self.office.change_image(target_img)
-                self.last_office_state = self.__office_state
-            self.office.render_office(screen, self.__office_state)
+                self.last_office_state = self.office_state
+            self.office.render_office(screen, self.office_state)
 
-    def update_bug_camera(self):
+    def update_bug_camera(self, screen):
         """if the player is on the cam where the bug is but meanwhile the bug moves the player still sees it so this is why i wrote this function"""
 
-        if self.__camera_state in self.bug_view_map:
-            required_location = self.bug_view_map[self.__camera_state]
+        if not self.cam_glitch_channel.get_busy():
+            self.cam_glitch_alpha = 70
+            self.cam_glitch_message = ""
+        if self.camera_state is not camera_state.NONE:
+            glitch_message = Text.Text(screen)
+            glitch_message.renderText(
+                self.cam_glitch_message,
+                "white",
+                (self.WIDTH / 2, self.HEIGHT / 2 - self.HEIGHT * 0.2),
+                True,
+            )
+        if self.camera_state in self.bug_view_map:
+            required_location = self.bug_view_map[self.camera_state]
             if self.bug_enemy.get_location() is not required_location:
-                self.cam_glitch_sound.play()
-                self.__camera_state = required_location
+                self.cam_glitch_channel = self.cam_glitch_sound.play()
+                self.cam_glitch_alpha = 250
+                self.cam_glitch_message = "Camera indisponibila"
+                self.camera_state = required_location
 
     def check_game_over(self, screen: pygame.Surface) -> bool:
         if self.bug_enemy.jumpscare:
@@ -296,7 +309,7 @@ class MainGame:
         return False
 
     def check_night_passed(self, screen: pygame.Surface) -> bool:
-        if self.__clock.get_minutes() == 6:
+        if self.clock.get_minutes() == 6:
             pygame.mixer.music.stop()
             stateLoader.advance_night(self.loaded_state)
             np = night_pass(screen, (self.WIDTH, self.HEIGHT), self.script_dir)
@@ -307,12 +320,9 @@ class MainGame:
     def handle_spray_mechanic(self):
         if self.game_over:
             return
-        if self.__camera_state is not camera_state.NONE:
+        if self.camera_state is not camera_state.NONE:
             return
-        if self.__office_state in [
-            office_state.OFFICE_FRONT_LIGHTS_OPEN,
-            office_state.OFFICE_FRONT_DARK_OPEN,
-        ]:
+        if self.office_state is office_state.OFFICE_FRONT_OPEN:
             print("aici")
             if self.spray.use_spray():
                 toxicity = self.spray.get_toxicity()
@@ -330,12 +340,48 @@ class MainGame:
                     self.game_over = True
                 self.small_bugs.decrease_counter()
 
+    def update_office_resources(self, screen):
+        """Renders clock, oxygen meter number of sprays and bugs on screen"""
+
+        # clock
+        if self.camera_state is camera_state.NONE:
+            clock_text = Text.Text(screen)
+            clock_text.renderText(
+                self.clock.get_hour_text() + " AM",
+                "white",
+                (self.WIDTH - 100, 40),
+                True,
+            )
+
+            # small bugs meter
+            small_bugs_text = Text.Text(screen, fontSize=30)
+            small_bugs_text.renderText(
+                "Bugs in room "
+                + str(self.small_bugs.current_bugs)
+                + "/"
+                + str(self.small_bugs.limit),
+                "white",
+                (20, self.HEIGHT - 130),
+            )
+
+            # Oxygen meter
+            oxygen_meter_text = Text.Text(screen, fontSize=30)
+            oxygen_meter_text.renderText(
+                "Oxygen Meter:", "white", (20, self.HEIGHT - 70)
+            )
+            self.oxygen.render_bar(screen, 10, self.HEIGHT - 40)
+
+            # Spray uses
+            spray_uses_text = Text.Text(screen, fontSize=30)
+            spray_count = self.spray.current_uses
+            color = "white" if spray_count > 0 else "red"
+            spray_uses_text.renderText(
+                "Spray: " + str(spray_count), color, (20, self.HEIGHT - 100)
+            )
+
     def main_game(self, screen: pygame.Surface):
         """main gameloop"""
-        clock_text = Text.Text(screen)
         framerate_clock = pygame.time.Clock()
-        ammo_text = Text.Text(screen, fontSize=30)
-        small_bugs_text = Text.Text(screen, fontSize=30)
         pygame.mixer.music.load(
             get_resource_path("/assets/audio/office_background.mp3")
         )
@@ -346,15 +392,8 @@ class MainGame:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     exit()
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_z:
-                    # just testing this will be removed
-                    print("z was pressed")
-                    if self.__office_state is office_state.OFFICE_FRONT_LIGHTS:
-                        self.__office_state = office_state.OFFICE_FRONT_DARK
-                    elif self.__office_state is office_state.OFFICE_FRONT_DARK:
-                        self.__office_state = office_state.OFFICE_FRONT_LIGHTS
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                    if self.__camera_state is not camera_state.NONE:
+                    if self.camera_state is not camera_state.NONE:
                         self.camera_event_handler(event)
                     else:
                         self.new_office_event_handler(event)
@@ -368,43 +407,21 @@ class MainGame:
             self.new_update_image(screen)
             self.bug_enemy.update()
             self.spray.update()
-            self.update_bug_camera()
-            if self.__window_open:
+            self.update_bug_camera(screen)
+            self.update_office_resources(screen)
+            if self.window_open:
                 self.oxygen.update()
 
-            if self.__camera_state is camera_state.NONE:
-                clock_text.renderText(
-                    self.__clock.get_hour_text() + " AM",
-                    "white",
-                    (self.WIDTH - 100, 40),
-                    True,
-                )
-                small_bugs_text.renderText(
-                    "Bugs in room "
-                    + str(self.small_bugs.current_bugs)
-                    + "/"
-                    + str(self.small_bugs.limit),
-                    "white",
-                    (20, self.HEIGHT - 130),
-                )
-                ammo_text.renderText("Oxygen Meter:", "white", (20, self.HEIGHT - 70))
-                self.oxygen.render_bar(screen, 10, self.HEIGHT - 40)
-                ammo_count = self.spray.current_uses
-                color = "white" if ammo_count > 0 else "red"
-                ammo_text.renderText(
-                    f"Spray: {ammo_count}", color, (20, self.HEIGHT - 100)
-                )
-
             if (
-                self.__office_state is not office_state.OFFICE_BACK_LIGHTS_OPEN
-                and self.__window_open
+                self.office_state is not office_state.OFFICE_BACK_OPEN
+                and self.window_open
             ):
                 self.small_bugs.update()
             if (
-                self.__office_state is not office_state.OFFICE_FRONT_LIGHTS_OPEN
-                or self.__camera_state is not camera_state.NONE
-            ) and self.__door_open:
+                self.office_state is not office_state.OFFICE_FRONT_OPEN
+                or self.camera_state is not camera_state.NONE
+            ) and self.door_open:
                 self.small_bugs.update()
             pygame.display.flip()
             framerate_clock.tick(60)
-            self.__clock.update()
+            self.clock.update()

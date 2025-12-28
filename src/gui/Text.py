@@ -1,7 +1,5 @@
 import pygame
 
-from utils.Deprecated import deprecated
-
 
 class Text:
     font: pygame.font.Font
@@ -28,16 +26,3 @@ class Text:
 
     def getSize(self):
         return self.fontSize
-
-
-@deprecated
-def renderText(
-    screen: pygame.Surface,
-    font: pygame.font.Font,
-    text: str,
-    color: pygame.Color,
-    dest: tuple[float, float],
-):
-    text = font.render(text, True, color)
-    text.set_alpha(180)
-    screen.blit(text, dest)

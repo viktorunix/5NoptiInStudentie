@@ -3,7 +3,7 @@ import random
 import pygame
 
 from mechanics.clock import clock
-from utils.camera_state import camera_state
+from utils.game_state import camera_state
 from utils.stateLoader import get_resource_path
 
 

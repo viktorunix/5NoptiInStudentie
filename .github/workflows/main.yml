@@ -2,7 +2,7 @@ name: Build Windows Port
 
 on:
   push:
-    branches: ["windows-port"]
+    branches: ["main"]
   workflow_dispatch:
 
 jobs:
@@ -10,25 +10,25 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.13'
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.13"
 
-    - name: Install Dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install pygame opencv-python pyinstaller
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pygame opencv-python pyinstaller
 
-    - name: Build with Pyinstaller
-      run: |
-        pyinstaller --name "CinciNoptiInStudentie.exe" --noconsole --onefile --add-data "assets;assets" --add-data "state;state" src/main.py
+      - name: Build with Pyinstaller
+        run: |
+          pyinstaller --name "CinciNoptiInStudentie.exe" --noconsole --onefile --add-data "assets;assets" --add-data "state;state" src/main.py
 
-    - name: Uploade Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: CinciNoptiInStudentie-Windows
-        path: dist/CinciNoptiInStudentie.exe
+      - name: Uploade Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: CinciNoptiInStudentie-Windows
+          path: dist/CinciNoptiInStudentie.exe
