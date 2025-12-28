@@ -1,6 +1,4 @@
 import os
-from asyncio.unix_events import FastChildWatcher
-from sre_parse import HEXDIGITS
 
 import pygame
 

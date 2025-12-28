@@ -9,7 +9,8 @@ def get_resource_path(relative_path):
         base_path = sys._MEIPASS
     except Exception:
         base_path = os.path.abspath(".")
-
+    if relative_path.startswith("/") or relative_path.startswith("\\"):
+        relative_path = relative_path[1:]
     return os.path.join(base_path, relative_path)
 
 
