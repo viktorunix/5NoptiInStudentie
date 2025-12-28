@@ -25,7 +25,7 @@ jobs:
 
     - name: Build with Pyinstaller
       run: |
-        pyinstaller --name "CinciNoptiInStudentie" --noconsole --onefile --add-data "assets;assets" --add-data "state;state" src/main.py
+        pyinstaller --name "CinciNoptiInStudentie.exe" --noconsole --onefile --add-data "assets;assets" --add-data "state;state" src/main.py
 
     - name: Uploade Artifact
       uses: actions/upload-artifact@v4
