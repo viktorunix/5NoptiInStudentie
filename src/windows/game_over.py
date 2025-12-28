@@ -2,6 +2,7 @@ import pygame
 
 from gui.Text import Text
 from mechanics.clock import clock
+from utils.stateLoader import get_resource_path
 
 
 class game_over:
@@ -17,7 +18,9 @@ class game_over:
         self.screen_dimensions = screen_dimensions
         self.description = Text(screen)
 
-        self.background = pygame.image.load(script_dir + "/assets/images/game_over.jpg")
+        self.background = pygame.image.load(
+            get_resource_path("/assets/images/game_over.jpg")
+        )
         self.background = pygame.transform.scale(
             self.background, self.screen_dimensions
         )

@@ -3,6 +3,7 @@ import pygame
 
 from gui.Text import Text
 from mechanics.clock import clock
+from utils.stateLoader import get_resource_path
 
 
 class night_pass:
@@ -12,8 +13,10 @@ class night_pass:
         print("night pass lol what do you expect")
         self.screen_dimensions = screen_dimensions
         self.clock = clock()
-        self.sound = pygame.mixer.Sound(script_dir + "/assets/audio/night_pass.mp3")
-        self.cap = cv2.VideoCapture(script_dir + "/assets/videos/night_pass.mov")
+        self.sound = pygame.mixer.Sound(
+            get_resource_path("/assets/audio/night_pass.mp3")
+        )
+        self.cap = cv2.VideoCapture(get_resource_path("/assets/videos/night_pass.mov"))
 
     def update(self, screen: pygame.Surface):
         print(self.screen_dimensions)

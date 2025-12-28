@@ -7,6 +7,7 @@ from pygame.time import Clock
 
 from gui import Text
 from gui.Button import Button
+from utils.stateLoader import get_resource_path
 from windows.MainGame import MainGame
 
 
@@ -15,7 +16,7 @@ class MainMenu:
     buttons = []
 
     def load_assets(self):
-        self.cap = cv2.VideoCapture(self.script_dir + "/assets/videos/mainmenu.mp4")
+        self.cap = cv2.VideoCapture(get_resource_path("/assets/videos/mainmenu.mp4"))
 
     def loader(self):
         self.load_assets()
@@ -29,7 +30,7 @@ class MainMenu:
         self.channel = pygame.mixer.find_channel()
         self.another_channel = pygame.mixer.find_channel()
         self.bugimage = pygame.image.load(
-            self.script_dir + "/assets/images/mainmenuanimatronic.png"
+            get_resource_path("/assets/images/mainmenuanimatronic.png")
         ).convert_alpha()
         self.bugimage.set_alpha(180)
         self.bugimage = pygame.transform.scale(
@@ -55,7 +56,7 @@ class MainMenu:
             )
         )
 
-        self.sound = pygame.mixer.Sound(self.script_dir + "/assets/audio/mainmenu.mp3")
+        self.sound = pygame.mixer.Sound(get_resource_path("/assets/audio/mainmenu.mp3"))
 
     def renderButtons(self, screen: Surface):
         for button in self.buttons:
@@ -75,7 +76,7 @@ class MainMenu:
         self.loader()
         # TOOO: fix bug regarding the sounds not playing
         easter_egg_sound = pygame.mixer.Sound(
-            self.script_dir + "/assets/audio/easteregg.mp3"
+            get_resource_path("/assets/audio/easteregg.mp3")
         )
         self.another_channel = pygame.mixer.find_channel()
         self.another_channel.play(easter_egg_sound)
@@ -95,7 +96,7 @@ class MainMenu:
                 loaded = True
             try:
                 image = pygame.image.load(
-                    self.script_dir + "/assets/images/warningscreen.jpeg"
+                    get_resource_path("/assets/images/warningscreen.jpeg")
                 )
                 image = pygame.transform.scale(image, (self.WIDTH, self.HEIGHT))
                 image.set_alpha(120)

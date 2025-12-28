@@ -4,26 +4,27 @@ import pygame
 from gui.OfficeButton import OfficeButton
 from gui.Picture import image
 from utils.camera_state import camera_state
+from utils.stateLoader import get_resource_path
 
 
 class Camera:
     """Class for rendering and defining each UI component for the camera surveillance mechanic"""
 
     def __init__(self, screen_dimension: tuple, script_dir: str):
-        self.cap = cv2.VideoCapture(script_dir + "/assets/videos/mainmenu.mp4")
+        self.cap = cv2.VideoCapture(get_resource_path("/assets/videos/mainmenu.mp4"))
         self.__width = screen_dimension[0]
         self.__height = screen_dimension[1]
         self.__script_dir = script_dir
         self.cam_close_sound = pygame.mixer.Sound(
-            script_dir + "/assets/audio/cam_close.mp3"
+            get_resource_path("/assets/audio/cam_close.mp3")
         )
         # TODO: add image to import in game
         self.camera = pygame.image.load(
-            script_dir + "/assets/images/main_hallway_a.jpg"
+            get_resource_path("/assets/images/main_hallway_a.jpg")
         )
 
         self.cam_switch_sound = pygame.mixer.Sound(
-            script_dir + "/assets/audio/cam_switch.mp3"
+            get_resource_path("/assets/audio/cam_switch.mp3")
         )
 
         scale_factor = self.__height / self.camera.get_height()
@@ -94,38 +95,46 @@ class Camera:
             sound=self.cam_switch_sound,
         )
         self.staircase_background = image(
-            script_dir + "/assets/images/staircase.jpg", screen_dimension, 1
+            get_resource_path("/assets/images/staircase.jpg"), screen_dimension, 1
         )
         self.main_hallway_a_background = image(
-            script_dir + "/assets/images/main_hallway_a.jpg", screen_dimension, 1
+            get_resource_path("/assets/images/main_hallway_a.jpg"), screen_dimension, 1
         )
         self.main_hallway_b_background = image(
-            script_dir + "/assets/images/main_hallway_b.jpg", screen_dimension, 1
+            get_resource_path("/assets/images/main_hallway_b.jpg"), screen_dimension, 1
         )
         self.bath_hallway_background = image(
-            script_dir + "/assets/images/bath_hallway.jpg", screen_dimension, 1
+            get_resource_path("/assets/images/bath_hallway.jpg"), screen_dimension, 1
         )
         self.main_hallway_office_background = image(
-            script_dir + "/assets/images/main_hallway_office.jpg", screen_dimension, 1
+            get_resource_path("/assets/images/main_hallway_office.jpg"),
+            screen_dimension,
+            1,
         )
 
         self.bath_hallway_bug_background = image(
-            script_dir + "/assets/images/bath_hallway_bug.jpg", screen_dimension, 1
+            get_resource_path("/assets/images/bath_hallway_bug.jpg"),
+            screen_dimension,
+            1,
         )
         self.main_hallway_a_bug_background = image(
-            script_dir + "/assets/images/main_hallway_a_bug.jpg", screen_dimension, 1
+            get_resource_path("/assets/images/main_hallway_a_bug.jpg"),
+            screen_dimension,
+            1,
         )
         self.main_hallway_b_bug_background = image(
-            script_dir + "/assets/images/main_hallway_b_bug.jpg", screen_dimension, 1
+            get_resource_path("/assets/images/main_hallway_b_bug.jpg"),
+            screen_dimension,
+            1,
         )
         self.main_hallway_office_bug_background = image(
-            script_dir + "/assets/images/main_hallway_office_bug.jpg",
+            get_resource_path("/assets/images/main_hallway_office_bug.jpg"),
             screen_dimension,
             1,
         )
 
         self.staircase_bug_background = image(
-            script_dir + "/assets/images/staircase_bug.jpg",
+            get_resource_path("/assets/images/staircase_bug.jpg"),
             screen_dimension,
             1,
         )

@@ -1,6 +1,4 @@
 import os
-from asyncio.unix_events import FastChildWatcher
-from sre_parse import HEXDIGITS
 
 import pygame
 
@@ -14,7 +12,7 @@ from mechanics.small_bugs import small_bugs
 from mechanics.spray import spray
 from utils.camera_state import camera_state
 from utils.office_state import office_state
-from utils.stateLoader import stateLoader
+from utils.stateLoader import get_resource_path, stateLoader
 from windows.game_over import game_over
 from windows.night_pass import night_pass
 
@@ -75,19 +73,19 @@ class MainGame:
             camera_state.STAIRWAY_BUG: camera_state.STAIRWAY,
         }
         self.cam_glitch_sound = pygame.mixer.Sound(
-            script_dir + "/assets/audio/cam_glitch.mp3"
+            get_resource_path("/assets/audio/cam_glitch.mp3")
         )
         self.window_open_sound = pygame.mixer.Sound(
-            script_dir + "/assets/audio/window_open.mp3"
+            get_resource_path("/assets/audio/window_open.mp3")
         )
         self.window_close_sound = pygame.mixer.Sound(
-            script_dir + "/assets/audio/window_close.mp3"
+            get_resource_path("/assets/audio/window_close.mp3")
         )
         self.door_open_sound = pygame.mixer.Sound(
-            script_dir + "/assets/audio/door_open.mp3"
+            get_resource_path("/assets/audio/door_open.mp3")
         )
         self.door_close_sound = pygame.mixer.Sound(
-            script_dir + "/assets/audio/door_close.mp3"
+            get_resource_path("/assets/audio/door_close.mp3")
         )
 
     def loadingScreen(
@@ -338,7 +336,9 @@ class MainGame:
         framerate_clock = pygame.time.Clock()
         ammo_text = Text.Text(screen, fontSize=30)
         small_bugs_text = Text.Text(screen, fontSize=30)
-        pygame.mixer.music.load(self.script_dir + "/assets/audio/office_background.mp3")
+        pygame.mixer.music.load(
+            get_resource_path("/assets/audio/office_background.mp3")
+        )
         pygame.mixer.music.set_volume(0.05)
         pygame.mixer.music.play(loops=-1, start=0.0)
 
