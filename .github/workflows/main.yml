@@ -31,4 +31,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: CinciNoptiInStudentie-Windows
-        path: dis/CinciNoptiInStudentie.exe
+        path: dist/CinciNoptiInStudentie.exe
