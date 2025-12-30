@@ -14,6 +14,7 @@ class BigBug:
         self.ai_level = ai_level
         self.move_timer = 0
         self.move_interval = 300  # 300 ticks or 5 seconds
+        self.move_interval_office = self.move_interval * 3
         self.sound = pygame.mixer.Sound(
             get_resource_path("/assets/audio/bug_repelled.mp3")
         )
@@ -35,9 +36,15 @@ class BigBug:
     def update(self):
         """called once per frame in the game"""
         self.move_timer += 1
-        if self.move_timer >= self.move_interval:
-            self.move_timer = 0
-            self.attempt_move()
+        if self.location is camera_state.MAIN_HALLWAY_OFFICE:
+            if self.move_timer >= self.move_interval_office:
+                self.jumpscare = True
+                return
+
+        else:
+            if self.move_timer >= self.move_interval:
+                self.move_timer = 0
+                self.attempt_move()
 
     def attempt_move(self):
         """The main AI logic: rolls a 20 faced dice.
