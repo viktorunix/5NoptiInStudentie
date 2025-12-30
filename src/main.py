@@ -14,6 +14,7 @@ warnings.simplefilter("always", DeprecationWarning)
 def main():
     # Initialize Pygame
     pygame.init()
+    pygame.mixer.pre_init(44100, -16, 2, 1024)
     pygame.mixer.init()
 
     # Screen setup

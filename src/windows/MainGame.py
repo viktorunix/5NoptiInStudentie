@@ -280,7 +280,7 @@ class MainGame:
                 for key, val in self.bug_view_map.items()
                 if val is self.camera_state
             ]
-            if states[0]:
+            if states:
                 self.camera_state = states[0]
 
     def check_game_over(self, screen: pygame.Surface) -> bool:
