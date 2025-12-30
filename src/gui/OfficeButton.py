@@ -38,7 +38,7 @@ class OfficeButton(Button):
             text = Text(screen)
             text.renderText(
                 self.__text,
-                "white",
+                self.__background,
                 (
                     draw_rect.x + draw_rect.width / 2,
                     draw_rect.y + draw_rect.height / 2,
@@ -60,6 +60,9 @@ class OfficeButton(Button):
 
     def get_state(self) -> bool:
         return self.__state
+
+    def set_text(self, text: str):
+        self.__text = text
 
     def change_state(self):
         self.__state = not self.__state

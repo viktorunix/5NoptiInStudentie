@@ -7,9 +7,7 @@ from utils.stateLoader import get_resource_path
 
 
 class night_pass:
-    def __init__(
-        self, screen: pygame.Surface, screen_dimensions: tuple, script_dir: str
-    ):
+    def __init__(self, screen: pygame.Surface, screen_dimensions: tuple):
         print("night pass lol what do you expect")
         self.screen_dimensions = screen_dimensions
         self.clock = clock()

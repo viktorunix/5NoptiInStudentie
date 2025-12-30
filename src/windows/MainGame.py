@@ -17,13 +17,13 @@ from windows.night_pass import night_pass
 
 
 class MainGame:
-    def __init__(self, WIDTH: int, HEIGHT: int, script_dir: str):
+    def __init__(self, WIDTH: int, HEIGHT: int):
         self.WIDTH = WIDTH
         self.HEIGHT = HEIGHT
         self.loaded_state: dict = {}
-        self.script_dir = script_dir
-        self.office = Office((self.WIDTH, self.HEIGHT), self.script_dir)
-        self.camera = Camera((self.WIDTH, self.HEIGHT), self.script_dir)
+
+        self.office = Office((self.WIDTH, self.HEIGHT))
+        self.camera = Camera((self.WIDTH, self.HEIGHT))
         self.ticks = 0
         self.camera_state: camera_state = camera_state.NONE
         self.office_state = office_state.OFFICE_FRONT
@@ -38,8 +38,8 @@ class MainGame:
         self.last_camera_state = None
         self.last_office_state = None
 
-        self.bug_enemy = BigBug("BigBug", camera_state.BATHROOM_HALLWAY, 10, script_dir)
-        self.spray = spray(script_dir)
+        self.bug_enemy = BigBug("BigBug", camera_state.BATHROOM_HALLWAY, 10)
+        self.spray = spray()
         self.small_bugs = small_bugs(30, 5)
 
         self.oxygen = OxygenMeter(max_oxygen=100, regen_rate=0.05)
@@ -201,6 +201,10 @@ class MainGame:
                     self.door_close_sound.play()
                     self.office_state = office_state.OFFICE_FRONT
                     self.door_open = False
+            if self.office.spray_button.mouse_click_handler(
+                event.pos, scroll_x=current_x
+            ):
+                self.handle_spray_mechanic()
         if is_back:
             if current_x == 0:
                 if self.office.front_office_button.mouse_click_handler(event.pos):
@@ -215,10 +219,12 @@ class MainGame:
             if current_x >= max_scroll_x:
                 if self.office.window_button.mouse_click_handler(event.pos):
                     if not self.window_open:
+                        self.office.window_button.set_text("Close")
                         self.window_open_sound.play()
                         self.office_state = office_state.OFFICE_BACK_OPEN
                         self.window_open = True
                     else:
+                        self.office.window_button.set_text("Open")
                         self.window_close_sound.play()
                         self.office_state = office_state.OFFICE_BACK
                         self.window_open = False
@@ -269,7 +275,6 @@ class MainGame:
                 gm = game_over(
                     screen,
                     (self.WIDTH, self.HEIGHT),
-                    self.script_dir,
                     "If the big bug is near your door",
                     "open the door and use the spray to repell it",
                 )
@@ -278,7 +283,6 @@ class MainGame:
                 gm = game_over(
                     screen,
                     (self.WIDTH, self.HEIGHT),
-                    self.script_dir,
                     "The spray can has limited uses",
                     "it should be use in critical moments or restock",
                 )
@@ -289,7 +293,6 @@ class MainGame:
             gm = game_over(
                 screen,
                 (self.WIDTH, self.HEIGHT),
-                self.script_dir,
                 "You suffocated from using too much spray",
                 "open the window to restore the oxygen level ",
             )
@@ -300,7 +303,6 @@ class MainGame:
             gm = game_over(
                 screen,
                 (self.WIDTH, self.HEIGHT),
-                self.script_dir,
                 "Too many bugs entered your room",
                 "dont let open doors or windows next time",
             )
@@ -312,7 +314,7 @@ class MainGame:
         if self.clock.get_minutes() == 6:
             pygame.mixer.music.stop()
             stateLoader.advance_night(self.loaded_state)
-            np = night_pass(screen, (self.WIDTH, self.HEIGHT), self.script_dir)
+            np = night_pass(screen, (self.WIDTH, self.HEIGHT))
             np.update(screen)
             return True
         return False
@@ -387,11 +389,13 @@ class MainGame:
         )
         pygame.mixer.music.set_volume(0.05)
         pygame.mixer.music.play(loops=-1, start=0.0)
-
-        while True:
+        running = True
+        while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    exit()
+                    running = False
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                    running = False
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     if self.camera_state is not camera_state.NONE:
                         self.camera_event_handler(event)

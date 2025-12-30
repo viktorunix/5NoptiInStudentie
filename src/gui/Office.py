@@ -7,10 +7,9 @@ from utils.stateLoader import get_resource_path
 
 
 class Office:
-    def __init__(self, screen_dimension: tuple, script_dir: str):
+    def __init__(self, screen_dimension: tuple):
         self.__width = screen_dimension[0]
         self.__height = screen_dimension[1]
-        self.__script_dir = script_dir
         self.office = pygame.image.load(
             get_resource_path("/assets/images/office_front_lights.jpeg")
         )
@@ -34,6 +33,8 @@ class Office:
             self.__width / 2,
             self.__height / 20,
             sound=self.cam_open_sound,
+            cam=True,
+            text="camera",
         )
         self.back_office_button = OfficeButton(
             pygame.Color("red"),
@@ -41,6 +42,8 @@ class Office:
             self.__height / 4,
             self.__width / 30,
             self.__height / 2,
+            cam=True,
+            text=">>",
         )
 
         self.door_button = OfficeButton(
@@ -49,6 +52,17 @@ class Office:
             self.__height / 4,
             self.__width / 30,
             self.__height / 20,
+            cam=True,
+            text="D",
+        )
+        self.spray_button = OfficeButton(
+            pygame.Color("red"),
+            self.__width * 17 / 18,
+            self.__height * 7 / 20,
+            self.__width / 30,
+            self.__height / 20,
+            cam=True,
+            text="S",
         )
         self.front_office_button = OfficeButton(
             pygame.Color("red"),
@@ -56,6 +70,8 @@ class Office:
             self.__height / 4,
             self.__width / 30,
             self.__height / 2,
+            cam=True,
+            text="<<",
         )
         self.front_office_button.change_state()
 
@@ -65,6 +81,8 @@ class Office:
             self.__height / 4,
             self.__width / 30,
             self.__height / 20,
+            cam=True,
+            text="Open",
         )
         run = True
         clock = pygame.time.Clock()
@@ -123,6 +141,7 @@ class Office:
         ):
             # self.__camera_button.render_button(screen)
             self.door_button.render_button(screen, scroll_x=self.camera_x)
+            self.spray_button.render_button(screen, scroll_x=self.camera_x)
             if self.camera_x == self.office.get_width() - self.__width:
                 self.back_office_button.render_button(screen)
 

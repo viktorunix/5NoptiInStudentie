@@ -4,7 +4,7 @@ from utils.stateLoader import get_resource_path
 
 
 class spray:
-    def __init__(self, script_dir, max_uses=10):
+    def __init__(self, max_uses=10):
         self.cooldown_max = 60  # 60 ticks = 1 sec
         self.cooldown_timer = 0
         self.toxicity_penalty = 40  # 40%
