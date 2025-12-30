@@ -268,6 +268,21 @@ class MainGame:
                 self.cam_glitch_message = "Camera indisponibila"
                 self.camera_state = required_location
 
+        # make bug appear on camera if the bug is on that location
+        if self.camera_state is self.bug_enemy.get_location():
+            self.cam_glitch_channel = self.cam_glitch_sound.play()
+            self.cam_glitch_alpha = 250
+            self.cam_glitch_message = "Camera indisponibila"
+
+            # we get every key in the dictionary and put it in a list
+            states = [
+                key
+                for key, val in self.bug_view_map.items()
+                if val is self.camera_state
+            ]
+            if states[0]:
+                self.camera_state = states[0]
+
     def check_game_over(self, screen: pygame.Surface) -> bool:
         if self.bug_enemy.jumpscare:
             pygame.mixer.music.stop()
