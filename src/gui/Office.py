@@ -7,10 +7,9 @@ from utils.stateLoader import get_resource_path
 
 
 class Office:
-    def __init__(self, screen_dimension: tuple, script_dir: str):
+    def __init__(self, screen_dimension: tuple):
         self.__width = screen_dimension[0]
         self.__height = screen_dimension[1]
-        self.__script_dir = script_dir
         self.office = pygame.image.load(
             get_resource_path("/assets/images/office_front_lights.jpeg")
         )

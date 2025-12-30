@@ -11,11 +11,10 @@ from utils.stateLoader import get_resource_path
 class Camera:
     """Class for rendering and defining each UI component for the camera surveillance mechanic"""
 
-    def __init__(self, screen_dimension: tuple, script_dir: str):
+    def __init__(self, screen_dimension: tuple):
         self.cap = cv2.VideoCapture(get_resource_path("/assets/videos/mainmenu.mp4"))
         self.__width = screen_dimension[0]
         self.__height = screen_dimension[1]
-        self.__script_dir = script_dir
         self.cam_close_sound = pygame.mixer.Sound(
             get_resource_path("/assets/audio/cam_close.mp3")
         )

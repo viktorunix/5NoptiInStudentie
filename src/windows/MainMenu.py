@@ -21,8 +21,7 @@ class MainMenu:
     def loader(self):
         self.load_assets()
 
-    def __init__(self, WIDTH: int, HEIGHT: int, script_dir):
-        self.script_dir = script_dir
+    def __init__(self, WIDTH: int, HEIGHT: int):
         self.sound = None
         self.WIDTH = WIDTH
         self.HEIGHT = HEIGHT
@@ -139,13 +138,13 @@ class MainMenu:
 
     def event_test(self, screen: Surface, clock: Clock):
         self.channel.stop()
-        mainGame = MainGame(self.WIDTH, self.HEIGHT, self.script_dir)
+        mainGame = MainGame(self.WIDTH, self.HEIGHT)
         mainGame.loadingScreen(screen, clock, True)
         self.channel.play(self.sound, -1)
 
     def event_test_altu(self, screen, clock):
         self.channel.stop()
-        mainGame = MainGame(self.WIDTH, self.HEIGHT, self.script_dir)
+        mainGame = MainGame(self.WIDTH, self.HEIGHT)
         mainGame.loadingScreen(screen, clock)
         self.channel.play(self.sound, -1)
 
@@ -156,6 +155,8 @@ class MainMenu:
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    self.running = False
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                     self.running = False
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     for button in self.buttons:
@@ -198,7 +199,7 @@ class MainMenu:
             screen.blit(self.bugimage, (self.WIDTH / 2, -self.HEIGHT / 10))
 
             text.renderText(
-                "BETA 1",
+                "BETA 2",
                 pygame.Color("white"),
                 (self.WIDTH * 20 / 25, self.HEIGHT * 23 / 25),
             )

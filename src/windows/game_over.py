@@ -10,7 +10,6 @@ class game_over:
         self,
         screen: pygame.Surface,
         screen_dimensions: tuple,
-        script_dir: str,
         message: str,
         tip: str,
     ):

@@ -8,9 +8,7 @@ from utils.stateLoader import get_resource_path
 
 
 class BigBug:
-    def __init__(
-        self, name: str, start_pos: camera_state, ai_level: int, script_dir: str
-    ):
+    def __init__(self, name: str, start_pos: camera_state, ai_level: int):
         self.name = name
         self.location = start_pos
         self.ai_level = ai_level
