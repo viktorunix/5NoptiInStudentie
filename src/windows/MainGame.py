@@ -201,6 +201,10 @@ class MainGame:
                     self.door_close_sound.play()
                     self.office_state = office_state.OFFICE_FRONT
                     self.door_open = False
+            if self.office.spray_button.mouse_click_handler(
+                event.pos, scroll_x=current_x
+            ):
+                self.handle_spray_mechanic()
         if is_back:
             if current_x == 0:
                 if self.office.front_office_button.mouse_click_handler(event.pos):
@@ -215,10 +219,12 @@ class MainGame:
             if current_x >= max_scroll_x:
                 if self.office.window_button.mouse_click_handler(event.pos):
                     if not self.window_open:
+                        self.office.window_button.set_text("Close")
                         self.window_open_sound.play()
                         self.office_state = office_state.OFFICE_BACK_OPEN
                         self.window_open = True
                     else:
+                        self.office.window_button.set_text("Open")
                         self.window_close_sound.play()
                         self.office_state = office_state.OFFICE_BACK
                         self.window_open = False

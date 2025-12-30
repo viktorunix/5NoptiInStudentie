@@ -12,10 +12,10 @@ class Text:
         self.font = pygame.font.Font(fontPath, fontSize)
         self.fontSize = fontSize
 
-    def renderText(self, text: str, color, dest: tuple, center=False):
-        if type(color) == str:
+    def renderText(self, message: str, color, dest: tuple, center=False):
+        if type(color) is str:
             color = pygame.Color(color)
-        text = self.font.render(text, True, color)
+        text = self.font.render(message, True, color)
         text.set_alpha(180)
         if center:
             textRect = text.get_rect()
