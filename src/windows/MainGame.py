@@ -89,6 +89,7 @@ class MainGame:
         self.door_close_sound = pygame.mixer.Sound(
             script_dir + "/assets/audio/door_close.mp3"
         )
+        self.jumpscare_image = pygame.image.load(script_dir + "/assets/images/mainmenuanimatronic.png")
 
     def loadingScreen(
         self, screen: pygame.Surface, clock: pygame.time.Clock, new_game: bool = False
