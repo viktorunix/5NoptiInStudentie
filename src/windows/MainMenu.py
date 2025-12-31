@@ -7,6 +7,8 @@ from pygame.time import Clock
 
 from gui import Text
 from gui.Button import Button
+from gui.video_background import VideoBackground
+from utils.stateLoader import get_resource_path
 from windows.MainGame import MainGame
 
 
@@ -15,13 +17,17 @@ class MainMenu:
     buttons = []
 
     def load_assets(self):
-        self.cap = cv2.VideoCapture(self.script_dir + "/assets/videos/mainmenu.mp4")
+        self.cap = cv2.VideoCapture(get_resource_path("/assets/videos/mainmenu.mp4"))
 
     def loader(self):
         self.load_assets()
 
-    def __init__(self, WIDTH: int, HEIGHT: int, script_dir):
-        self.script_dir = script_dir
+    def __init__(self, WIDTH: int, HEIGHT: int):
+        print("incepe")
+        self.video_background = VideoBackground(
+            get_resource_path("/assets/videos/mainmenu.mp4"), WIDTH, HEIGHT
+        )
+        print("terminat")
         self.sound = None
         self.WIDTH = WIDTH
         self.HEIGHT = HEIGHT
@@ -29,7 +35,7 @@ class MainMenu:
         self.channel = pygame.mixer.find_channel()
         self.another_channel = pygame.mixer.find_channel()
         self.bugimage = pygame.image.load(
-            self.script_dir + "/assets/images/mainmenuanimatronic.png"
+            get_resource_path("/assets/images/mainmenuanimatronic.png")
         ).convert_alpha()
         self.bugimage.set_alpha(180)
         self.bugimage = pygame.transform.scale(
@@ -55,7 +61,7 @@ class MainMenu:
             )
         )
 
-        self.sound = pygame.mixer.Sound(self.script_dir + "/assets/audio/mainmenu.mp3")
+        self.sound = pygame.mixer.Sound(get_resource_path("/assets/audio/mainmenu.mp3"))
 
     def renderButtons(self, screen: Surface):
         for button in self.buttons:
@@ -75,12 +81,12 @@ class MainMenu:
         self.loader()
         # TOOO: fix bug regarding the sounds not playing
         easter_egg_sound = pygame.mixer.Sound(
-            self.script_dir + "/assets/audio/easteregg.mp3"
+            get_resource_path("/assets/audio/easteregg.mp3")
         )
         self.another_channel = pygame.mixer.find_channel()
         self.another_channel.play(easter_egg_sound)
-        fontSize = self.HEIGHT // 15
-        text = Text.Text(screen, None, fontSize)
+        # fontSize = self.HEIGHT // 15
+        text = Text.Text(screen)
         is_enter: bool = False
         while not loaded:
             for event in pygame.event.get():
@@ -90,12 +96,12 @@ class MainMenu:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
                         is_enter = True
-            ret, frame = self.cap.read()
+            # ret, frame = self.cap.read()
             if is_enter:
                 loaded = True
             try:
                 image = pygame.image.load(
-                    self.script_dir + "/assets/images/warningscreen.jpeg"
+                    get_resource_path("/assets/images/warningscreen.jpeg")
                 )
                 image = pygame.transform.scale(image, (self.WIDTH, self.HEIGHT))
                 image.set_alpha(120)
@@ -106,13 +112,13 @@ class MainMenu:
             text.renderText(
                 "ATENTIE!!",
                 "red",
-                (self.WIDTH / 2, self.HEIGHT / 2 - 2 * fontSize),
+                (self.WIDTH / 2, self.HEIGHT / 2 - 2 * text.fontSize),
                 True,
             )
             text.renderText(
                 "Acest joc este o parodie si trebuie tratat ca atare",
                 "white",
-                (self.WIDTH / 2, self.HEIGHT / 2 - fontSize),
+                (self.WIDTH / 2, self.HEIGHT / 2 - text.fontSize),
                 True,
             )
             text.renderText(
@@ -124,13 +130,13 @@ class MainMenu:
             text.renderText(
                 "Prin continuare sunteti de acord cu cele spuse de mai sus",
                 "white",
-                (self.WIDTH / 2, self.HEIGHT / 2 + fontSize),
+                (self.WIDTH / 2, self.HEIGHT / 2 + text.fontSize),
                 True,
             )
             text.renderText(
                 "Apasati tasta Enter pentru a continua",
                 "white",
-                (self.WIDTH / 2, self.HEIGHT / 2 + 3 * fontSize),
+                (self.WIDTH / 2, self.HEIGHT / 2 + 3 * text.fontSize),
                 True,
             )
             pygame.display.flip()
@@ -138,49 +144,44 @@ class MainMenu:
 
     def event_test(self, screen: Surface, clock: Clock):
         self.channel.stop()
-        mainGame = MainGame(self.WIDTH, self.HEIGHT, self.script_dir)
+        mainGame = MainGame(self.WIDTH, self.HEIGHT, self.video_background)
         mainGame.loadingScreen(screen, clock, True)
         self.channel.play(self.sound, -1)
 
     def event_test_altu(self, screen, clock):
         self.channel.stop()
-        mainGame = MainGame(self.WIDTH, self.HEIGHT, self.script_dir)
+        mainGame = MainGame(self.WIDTH, self.HEIGHT, self.video_background)
         mainGame.loadingScreen(screen, clock)
         self.channel.play(self.sound, -1)
 
     def renderMainMenu(self, screen: Surface, clock: Clock):
         self.channel.play(self.sound, -1)
-        fontSize = self.HEIGHT // 10
-        text = Text.Text(screen, None, fontSize)
+        text = Text.Text(screen)
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                    self.running = False
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     for button in self.buttons:
                         button.mouse_click_handler(event.pos, screen, clock)
-            ret, frame = self.cap.read()
-            if not ret:
-                self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
-                continue
-            frame = cv2.resize(frame, (self.WIDTH, self.HEIGHT))
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            frame = pygame.surfarray.make_surface(frame.swapaxes(0, 1))
-            screen.blit(frame, (0, 0))
-            # font = pygame.font.Font(None, self.WIDTH // 10)
+            self.video_background.static_update(screen)
             horizontalOffset = self.WIDTH / 25
             verticalOffset = self.HEIGHT / 20
             text.renderText("Cinci", "white", (horizontalOffset, verticalOffset))
             text.renderText(
-                "Nopti", "white", (horizontalOffset, verticalOffset + fontSize * 0.75)
+                "Nopti",
+                "white",
+                (horizontalOffset, verticalOffset + text.fontSize * 0.75),
             )
             text.renderText(
-                "In", "white", (horizontalOffset, verticalOffset + fontSize * 1.5)
+                "In", "white", (horizontalOffset, verticalOffset + text.fontSize * 1.5)
             )
             text.renderText(
                 "Studentie",
                 "white",
-                (horizontalOffset, verticalOffset + fontSize * 2.25),
+                (horizontalOffset, verticalOffset + text.fontSize * 2.25),
             )
 
             text.renderText(
@@ -197,9 +198,10 @@ class MainMenu:
             screen.blit(self.bugimage, (self.WIDTH / 2, -self.HEIGHT / 10))
 
             text.renderText(
-                "ALPHA 4",
+                "BETA 3",
                 pygame.Color("white"),
-                (self.WIDTH * 20 / 25, self.HEIGHT * 23 / 25),
+                (self.WIDTH * 24 / 25, self.HEIGHT * 24 / 25),
+                True,
             )
             # self.renderButtons(screen)
             pygame.display.flip()

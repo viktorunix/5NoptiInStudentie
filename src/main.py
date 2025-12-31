@@ -12,11 +12,9 @@ warnings.simplefilter("always", DeprecationWarning)
 
 
 def main():
-    button: OfficeButton = OfficeButton(2, 2, 2, 2, 2, main)
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    script_dir = script_dir[:-4]
     # Initialize Pygame
     pygame.init()
+    pygame.mixer.pre_init(44100, -16, 2, 1024)
     pygame.mixer.init()
 
     # Screen setup
@@ -38,7 +36,7 @@ def main():
 
     # Game loop
 
-    menu = MainMenu(WIDTH, HEIGHT, script_dir)
+    menu = MainMenu(WIDTH, HEIGHT)
     menu.loader()
 
     menu.warningScreen(screen, clock)

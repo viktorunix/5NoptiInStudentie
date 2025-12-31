@@ -1,15 +1,21 @@
 import pygame
 
+from utils.stateLoader import get_resource_path
+
 
 class spray:
-    def __init__(self, script_dir, max_uses=10):
+    def __init__(self, max_uses=1):
         self.cooldown_max = 60  # 60 ticks = 1 sec
         self.cooldown_timer = 0
         self.toxicity_penalty = 40  # 40%
         self.max_uses = max_uses
         self.current_uses = max_uses
+        self.restock_timer = 0
+        self.restock_max = 60 * 20  # 20 sec
         try:
-            self.sound = pygame.mixer.Sound(script_dir + "/assets/audio/spray.mp3")
+            self.sound = pygame.mixer.Sound(
+                get_resource_path("/assets/audio/spray.mp3")
+            )
         except:
             self.sound = None
 
@@ -30,3 +36,11 @@ class spray:
 
     def get_toxicity(self):
         return self.toxicity_penalty
+
+    def restock(self) -> bool:
+        self.restock_timer += 1
+        if self.restock_timer >= self.restock_max:
+            self.restock_timer = 0
+            self.current_uses = self.max_uses
+            return False
+        return True

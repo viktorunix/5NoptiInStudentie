@@ -34,22 +34,11 @@ class OfficeButton(Button):
         if not self.__cam:
             pygame.draw.rect(screen, self.__background, draw_rect)
         else:
-            # pygame.draw.rect(screen, self.__background, self.__rect)
-            # pygame.draw.rect(
-            #    screen,
-            #    pygame.Color("black"),
-            #    (
-            #        self.__rect.x + 5,
-            #        self.__rect.y + 5,
-            #        self.__rect.width - 10,
-            #        self.__rect.height - 10,
-            #    ),
-            # )
             pygame.draw.rect(screen, self.__background, draw_rect, 5)
             text = Text(screen)
             text.renderText(
                 self.__text,
-                "white",
+                self.__background,
                 (
                     draw_rect.x + draw_rect.width / 2,
                     draw_rect.y + draw_rect.height / 2,
@@ -71,6 +60,9 @@ class OfficeButton(Button):
 
     def get_state(self) -> bool:
         return self.__state
+
+    def set_text(self, text: str):
+        self.__text = text
 
     def change_state(self):
         self.__state = not self.__state
