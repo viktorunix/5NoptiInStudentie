@@ -15,6 +15,7 @@ class Camera:
         self.cap = cv2.VideoCapture(get_resource_path("/assets/videos/mainmenu.mp4"))
         self.__width = screen_dimension[0]
         self.__height = screen_dimension[1]
+
         self.cam_close_sound = pygame.mixer.Sound(
             get_resource_path("/assets/audio/cam_close.mp3")
         )
@@ -97,6 +98,16 @@ class Camera:
             text="3A",
             sound=self.cam_switch_sound,
         )
+        self.restock_spray_button = OfficeButton(
+            pygame.Color("white"),
+            screen_dimension[0] / 9,
+            screen_dimension[1] / 9,
+            horizontalSize * 3,
+            verticalSize,
+            cam=True,
+            text="Restock",
+            sound=None,
+        )
         self.staircase_background = image(
             get_resource_path("/assets/images/staircase.jpg"), screen_dimension, 1
         )
@@ -145,7 +156,7 @@ class Camera:
     def change_image(self, image):
         self.camera = image.get_image()
 
-    def render_camera(self, screen, camera_state, alpha: int):
+    def render_camera(self, screen, camera_state_player, alpha: int):
         screen.blit(self.camera, (0, 0))
         self.static_update(screen, alpha)
 
@@ -219,6 +230,8 @@ class Camera:
         self.main_hallway_b_button.render_button(screen)
         self.staircase_button.render_button(screen)
         self.main_hallway_office_button.render_button(screen)
+        if camera_state_player in [camera_state.STAIRWAY, camera_state.STAIRWAY_BUG]:
+            self.restock_spray_button.render_button(screen)
 
     def static_update(self, screen: pygame.Surface, alpha: int):
         ret, frame = self.cap.read()
