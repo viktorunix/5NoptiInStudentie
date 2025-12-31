@@ -85,8 +85,8 @@ class MainMenu:
         )
         self.another_channel = pygame.mixer.find_channel()
         self.another_channel.play(easter_egg_sound)
-        fontSize = self.HEIGHT // 15
-        text = Text.Text(screen, None, fontSize)
+        # fontSize = self.HEIGHT // 15
+        text = Text.Text(screen)
         is_enter: bool = False
         while not loaded:
             for event in pygame.event.get():
@@ -112,13 +112,13 @@ class MainMenu:
             text.renderText(
                 "ATENTIE!!",
                 "red",
-                (self.WIDTH / 2, self.HEIGHT / 2 - 2 * fontSize),
+                (self.WIDTH / 2, self.HEIGHT / 2 - 2 * text.fontSize),
                 True,
             )
             text.renderText(
                 "Acest joc este o parodie si trebuie tratat ca atare",
                 "white",
-                (self.WIDTH / 2, self.HEIGHT / 2 - fontSize),
+                (self.WIDTH / 2, self.HEIGHT / 2 - text.fontSize),
                 True,
             )
             text.renderText(
@@ -130,13 +130,13 @@ class MainMenu:
             text.renderText(
                 "Prin continuare sunteti de acord cu cele spuse de mai sus",
                 "white",
-                (self.WIDTH / 2, self.HEIGHT / 2 + fontSize),
+                (self.WIDTH / 2, self.HEIGHT / 2 + text.fontSize),
                 True,
             )
             text.renderText(
                 "Apasati tasta Enter pentru a continua",
                 "white",
-                (self.WIDTH / 2, self.HEIGHT / 2 + 3 * fontSize),
+                (self.WIDTH / 2, self.HEIGHT / 2 + 3 * text.fontSize),
                 True,
             )
             pygame.display.flip()
@@ -156,8 +156,7 @@ class MainMenu:
 
     def renderMainMenu(self, screen: Surface, clock: Clock):
         self.channel.play(self.sound, -1)
-        fontSize = self.HEIGHT // 10
-        text = Text.Text(screen, None, fontSize)
+        text = Text.Text(screen)
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -172,15 +171,17 @@ class MainMenu:
             verticalOffset = self.HEIGHT / 20
             text.renderText("Cinci", "white", (horizontalOffset, verticalOffset))
             text.renderText(
-                "Nopti", "white", (horizontalOffset, verticalOffset + fontSize * 0.75)
+                "Nopti",
+                "white",
+                (horizontalOffset, verticalOffset + text.fontSize * 0.75),
             )
             text.renderText(
-                "In", "white", (horizontalOffset, verticalOffset + fontSize * 1.5)
+                "In", "white", (horizontalOffset, verticalOffset + text.fontSize * 1.5)
             )
             text.renderText(
                 "Studentie",
                 "white",
-                (horizontalOffset, verticalOffset + fontSize * 2.25),
+                (horizontalOffset, verticalOffset + text.fontSize * 2.25),
             )
 
             text.renderText(
@@ -199,7 +200,8 @@ class MainMenu:
             text.renderText(
                 "BETA 2",
                 pygame.Color("white"),
-                (self.WIDTH * 20 / 25, self.HEIGHT * 23 / 25),
+                (self.WIDTH * 24 / 25, self.HEIGHT * 24 / 25),
+                True,
             )
             # self.renderButtons(screen)
             pygame.display.flip()
