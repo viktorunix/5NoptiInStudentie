@@ -32,7 +32,7 @@ class MainGame:
         self.door_open: bool = False
         self.window_open: bool = False
         self.lights_on: bool = True
-
+        self.is_restocking: bool = False
         self.cam_glitch_alpha = 70
         self.cam_glitch_channel = pygame.mixer.Channel(0)
         self.cam_glitch_message = ""
@@ -183,6 +183,12 @@ class MainGame:
                 camera_state.BATHROOM_HALLWAY_BUG,
             ),
         ]
+        if (
+            self.camera_state in [camera_state.STAIRWAY_BUG, camera_state.STAIRWAY]
+            and not self.is_restocking
+        ):
+            if self.camera.restock_spray_button.mouse_click_handler(event.pos):
+                self.is_restocking = True
         current_bug_loc = self.bug_enemy.get_location()
         for button, normal_state, bug_state in cam_buttons:
             if button.mouse_click_handler(event.pos):
@@ -429,6 +435,13 @@ class MainGame:
             spray_uses_text.renderText(
                 "Spray: " + str(spray_count), color, (20, self.HEIGHT - 100)
             )
+        if self.is_restocking:
+            self.camera.restock_spray_button.set_text(
+                f"Restocking in {int((self.spray.restock_max - self.spray.restock_timer) / 60)}"
+            )
+            self.is_restocking = self.spray.restock()
+        else:
+            self.camera.restock_spray_button.set_text("Restock")
 
     def main_game(self, screen: pygame.Surface):
         """main gameloop"""
@@ -462,6 +475,7 @@ class MainGame:
             self.spray.update()
             self.update_bug_camera(screen)
             self.update_office_resources(screen)
+
             if self.window_open:
                 self.oxygen.update()
 
