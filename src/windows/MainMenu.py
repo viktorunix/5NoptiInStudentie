@@ -7,6 +7,7 @@ from pygame.time import Clock
 
 from gui import Text
 from gui.Button import Button
+from gui.video_background import VideoBackground
 from utils.stateLoader import get_resource_path
 from windows.MainGame import MainGame
 
@@ -22,6 +23,11 @@ class MainMenu:
         self.load_assets()
 
     def __init__(self, WIDTH: int, HEIGHT: int):
+        print("incepe")
+        self.video_background = VideoBackground(
+            get_resource_path("/assets/videos/mainmenu.mp4"), WIDTH, HEIGHT
+        )
+        print("terminat")
         self.sound = None
         self.WIDTH = WIDTH
         self.HEIGHT = HEIGHT
@@ -90,7 +96,7 @@ class MainMenu:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
                         is_enter = True
-            ret, frame = self.cap.read()
+            # ret, frame = self.cap.read()
             if is_enter:
                 loaded = True
             try:
@@ -138,13 +144,13 @@ class MainMenu:
 
     def event_test(self, screen: Surface, clock: Clock):
         self.channel.stop()
-        mainGame = MainGame(self.WIDTH, self.HEIGHT)
+        mainGame = MainGame(self.WIDTH, self.HEIGHT, self.video_background)
         mainGame.loadingScreen(screen, clock, True)
         self.channel.play(self.sound, -1)
 
     def event_test_altu(self, screen, clock):
         self.channel.stop()
-        mainGame = MainGame(self.WIDTH, self.HEIGHT)
+        mainGame = MainGame(self.WIDTH, self.HEIGHT, self.video_background)
         mainGame.loadingScreen(screen, clock)
         self.channel.play(self.sound, -1)
 
@@ -161,15 +167,7 @@ class MainMenu:
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     for button in self.buttons:
                         button.mouse_click_handler(event.pos, screen, clock)
-            ret, frame = self.cap.read()
-            if not ret:
-                self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
-                continue
-            frame = cv2.resize(frame, (self.WIDTH, self.HEIGHT))
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            frame = pygame.surfarray.make_surface(frame.swapaxes(0, 1))
-            screen.blit(frame, (0, 0))
-            # font = pygame.font.Font(None, self.WIDTH // 10)
+            self.video_background.static_update(screen)
             horizontalOffset = self.WIDTH / 25
             verticalOffset = self.HEIGHT / 20
             text.renderText("Cinci", "white", (horizontalOffset, verticalOffset))

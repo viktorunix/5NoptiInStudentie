@@ -18,13 +18,13 @@ from windows.night_pass import night_pass
 
 
 class MainGame:
-    def __init__(self, WIDTH: int, HEIGHT: int):
+    def __init__(self, WIDTH: int, HEIGHT: int, video_background=None):
         self.WIDTH = WIDTH
         self.HEIGHT = HEIGHT
         self.loaded_state: dict = {}
-
+        self.video_background = video_background
         self.office = Office((self.WIDTH, self.HEIGHT))
-        self.camera = Camera((self.WIDTH, self.HEIGHT))
+        self.camera = Camera((self.WIDTH, self.HEIGHT), self.video_background)
         self.ticks = 0
         self.camera_state: camera_state = camera_state.NONE
         self.office_state = office_state.OFFICE_FRONT
