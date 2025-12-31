@@ -4,6 +4,7 @@ import pygame
 from gui.OfficeButton import OfficeButton
 from gui.Picture import image
 from gui.Text import Text
+from gui.video_background import VideoBackground
 from utils.game_state import camera_state
 from utils.stateLoader import get_resource_path
 
@@ -11,11 +12,13 @@ from utils.stateLoader import get_resource_path
 class Camera:
     """Class for rendering and defining each UI component for the camera surveillance mechanic"""
 
-    def __init__(self, screen_dimension: tuple):
+    def __init__(
+        self, screen_dimension: tuple, video_background: VideoBackground = None
+    ):
         self.cap = cv2.VideoCapture(get_resource_path("/assets/videos/mainmenu.mp4"))
         self.__width = screen_dimension[0]
         self.__height = screen_dimension[1]
-
+        self.video_background = video_background
         self.cam_close_sound = pygame.mixer.Sound(
             get_resource_path("/assets/audio/cam_close.mp3")
         )
@@ -158,7 +161,8 @@ class Camera:
 
     def render_camera(self, screen, camera_state_player, alpha: int):
         screen.blit(self.camera, (0, 0))
-        self.static_update(screen, alpha)
+        self.video_background.static_update(screen, alpha)
+        # self.static_update(screen, alpha)
 
         horizontalOffset = self.__width * 2 / 3
         verticalOffset = self.__height * 4 / 5
