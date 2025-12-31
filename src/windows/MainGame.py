@@ -1,4 +1,5 @@
 import os
+from this import s
 
 import pygame
 
@@ -97,19 +98,52 @@ class MainGame:
             self.loaded_state = stateLoader.load_state()
         else:
             self.loaded_state = stateLoader.new_state()
-        text = Text.Text(screen, None, self.HEIGHT // 10)
+        text = Text.Text(screen)
         while not loaded:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit()
-            if self.ticks == 60 * 3:
+            if self.ticks == 60 * 10:
                 loaded = True
             screen.fill((0, 0, 0))
             text.renderText(
                 "Night " + str(self.loaded_state["night"]),
                 "white",
                 (self.WIDTH / 2, self.HEIGHT / 3),
+                True,
+            )
+            text.renderText(
+                "Dont let bugs in your room, especially the big one",
+                "white",
+                (self.WIDTH / 2, self.HEIGHT / 2 + text.getSize()),
+                True,
+            )
+            text.renderText(
+                "Open the door and use the spray to repell the big bug",
+                "white",
+                (
+                    self.WIDTH / 2,
+                    self.HEIGHT / 2 + 2 * text.getSize(),
+                ),
+                True,
+            )
+            text.renderText(
+                "Dont let open the window or door too long or you risk and infestation",
+                "white",
+                (
+                    self.WIDTH / 2,
+                    self.HEIGHT / 2 + 3 * text.getSize(),
+                ),
+                True,
+            )
+            text.renderText(
+                "Using too much spray would suffocate you, make sure you ventilate the room",
+                "white",
+                (
+                    self.WIDTH / 2,
+                    self.HEIGHT / 2 + 4 * text.getSize(),
+                ),
                 True,
             )
             pygame.display.flip()
