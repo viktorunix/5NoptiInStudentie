@@ -1,4 +1,5 @@
 import os
+import math
 from this import s
 
 import pygame
@@ -88,6 +89,26 @@ class MainGame:
         self.door_close_sound = pygame.mixer.Sound(
             get_resource_path("/assets/audio/door_close.mp3")
         )
+        self.jumpscare_sound = pygame.mixer.Sound(
+            get_resource_path("/assets/audio/jumpscare_sound.mp3")
+        )
+        unscaled_jmpsc_image = pygame.image.load(
+            get_resource_path("/assets/images/mainmenuanimatronic.png")
+        )
+        scale_factor_bug = self.HEIGHT / 150
+        self.jumpscare_image = pygame.transform.scale(
+            unscaled_jmpsc_image, (unscaled_jmpsc_image.get_width() * scale_factor_bug,
+                                   unscaled_jmpsc_image.get_height() * scale_factor_bug)
+        ).convert_alpha()
+        unscaled_office_background = pygame.image.load(
+            get_resource_path("/assets/images/office_front_lights.jpeg")
+        )
+        self.jumpscare_animation_frames = self.load_jumpscare_animation()
+        scale_factor_office = self.HEIGHT / unscaled_office_background.get_height()
+        new_width = int(unscaled_office_background.get_width() * scale_factor_office)
+        print(str(scale_factor_office) + " " + str(new_width))
+        self.office_background = pygame.transform.scale(unscaled_office_background, (new_width, self.HEIGHT)).convert_alpha()
+
 
     def loadingScreen(
         self, screen: pygame.Surface, clock: pygame.time.Clock, new_game: bool = False
@@ -323,9 +344,49 @@ class MainGame:
             if states:
                 self.camera_state = states[0]
 
+    def load_jumpscare_animation(self) -> list[pygame.Surface]:
+        animation_frames = []
+        for i in range(10):
+            animation_frame = pygame.transform.scale(
+                self.jumpscare_image,
+                (self.jumpscare_image.get_width() / (10 - i),
+                 self.jumpscare_image.get_height() / (10 - i))
+            )
+            animation_frames.append(animation_frame)
+        for i in range(15):
+            animation_frame = pygame.transform.rotate(
+                self.jumpscare_image,
+                30 * math.sin(i * 2 * math.pi / 15)
+            )
+            animation_frames.append(animation_frame)
+        return animation_frames
+
+    def jumpscare_animation(self, screen: pygame.Surface):
+        framerate_clock = pygame.time.Clock()
+        self.jumpscare_sound.play()
+        for i in range(10):
+            screen.blit(self.office_background, (0, 0))
+            screen.blit(self.jumpscare_animation_frames[i],
+                        ((self.WIDTH - self.jumpscare_animation_frames[i].get_width()) / 2,
+                         (self.HEIGHT - self.jumpscare_animation_frames[i].get_height() * 0.8) / 2))
+            pygame.display.flip()
+            framerate_clock.tick(60)
+            self.clock.update()
+
+        for j in range(8):
+            for i in range(15):
+                screen.blit(self.office_background, (0, 0))
+                screen.blit(self.jumpscare_animation_frames[i + 10],
+                            ((self.WIDTH - self.jumpscare_animation_frames[i + 10].get_width()) / 2,
+                             (self.HEIGHT - self.jumpscare_animation_frames[i + 10].get_height() * 0.8) / 2))
+                pygame.display.flip()
+                framerate_clock.tick(60)
+                self.clock.update()
+
     def check_game_over(self, screen: pygame.Surface) -> bool:
         if self.bug_enemy.jumpscare:
             pygame.mixer.music.stop()
+            self.jumpscare_animation(screen)
             if self.spray.current_uses != 0:
                 gm = game_over(
                     screen,
@@ -344,6 +405,7 @@ class MainGame:
                 gm.update(screen)
             return True
         if self.oxygen.current_oxygen <= 0:
+            self.jumpscare_animation(screen)
             pygame.mixer.music.stop()
             gm = game_over(
                 screen,
@@ -354,6 +416,7 @@ class MainGame:
             gm.update(screen)
             return True
         if self.small_bugs.check_limit():
+            self.jumpscare_animation(screen)
             pygame.mixer.music.stop()
             gm = game_over(
                 screen,
