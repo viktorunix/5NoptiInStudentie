@@ -86,7 +86,6 @@ class MainMenu:
         self.another_channel = pygame.mixer.find_channel()
         self.another_channel.play(easter_egg_sound)
         # fontSize = self.HEIGHT // 15
-        text = Text.Text(screen)
         is_enter: bool = False
         while not loaded:
             for event in pygame.event.get():
@@ -109,12 +108,14 @@ class MainMenu:
                 # font = pygame.font.Font(None, self.HEIGHT // 20)
             except Exception as e:
                 print("Warning screen background image not found")
+            text = Text.Text(screen, fontSize=100)
             text.renderText(
                 "ATENTIE!!",
                 "red",
                 (self.WIDTH / 2, self.HEIGHT / 2 - 2 * text.fontSize),
                 True,
             )
+            text = Text.Text(screen)
             text.renderText(
                 "Acest joc este o parodie si trebuie tratat ca atare",
                 "white",
@@ -156,7 +157,7 @@ class MainMenu:
 
     def renderMainMenu(self, screen: Surface, clock: Clock):
         self.channel.play(self.sound, -1)
-        text = Text.Text(screen)
+        text = Text.Text(screen, fontSize=120)
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -200,7 +201,7 @@ class MainMenu:
             text.renderText(
                 "BETA 3",
                 pygame.Color("white"),
-                (self.WIDTH * 24 / 25, self.HEIGHT * 24 / 25),
+                (self.WIDTH * 23 / 25, self.HEIGHT * 24 / 25),
                 True,
             )
             # self.renderButtons(screen)

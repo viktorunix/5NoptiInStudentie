@@ -97,7 +97,6 @@ class MainGame:
             self.loaded_state = stateLoader.load_state()
         else:
             self.loaded_state = stateLoader.new_state()
-        text = Text.Text(screen)
         while not loaded:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -106,12 +105,14 @@ class MainGame:
             if self.ticks == 60 * 10:
                 loaded = True
             screen.fill((0, 0, 0))
+            text = Text.Text(screen, fontSize=100)
             text.renderText(
                 "Night " + str(self.loaded_state["night"]),
                 "white",
                 (self.WIDTH / 2, self.HEIGHT / 3),
                 True,
             )
+            text = Text.Text(screen)
             text.renderText(
                 "Dont let bugs in your room, especially the big one",
                 "white",
