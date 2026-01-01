@@ -1,4 +1,4 @@
-class small_bugs:
+class SmallBugs:
     def __init__(self, limit: int, amount_remove: int):
         self.limit = limit
         self.current_bugs = 0

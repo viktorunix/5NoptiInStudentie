@@ -4,7 +4,7 @@ import pygame
 from gui.OfficeButton import OfficeButton
 from gui.Picture import image
 from gui.Text import Text
-from gui.video_background import VideoBackground
+from gui.VideoBackground import VideoBackground
 from utils.game_state import camera_state
 from utils.stateLoader import get_resource_path
 

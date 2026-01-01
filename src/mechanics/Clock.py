@@ -1,4 +1,4 @@
-class clock:
+class Clock:
     """Tracks time to update mechanic and to see night progress"""
 
     def __init__(self):

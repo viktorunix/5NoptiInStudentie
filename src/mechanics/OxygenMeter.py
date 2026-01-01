@@ -2,12 +2,12 @@ import pygame
 
 
 class OxygenMeter:
-    def __init__(self, max_oxygen=100, regen_rate=0.1):
+    def __init__(self, max_oxygen, regen_rate, screen_height: int):
         self.max_oxygen = max_oxygen
         self.current_oxygen = max_oxygen
         self.regen_rate = regen_rate
-        self.width = 200
-        self.height = 20
+        self.width = screen_height / 5
+        self.height = screen_height / 50
 
     def update(self):
         if self.current_oxygen < self.max_oxygen:

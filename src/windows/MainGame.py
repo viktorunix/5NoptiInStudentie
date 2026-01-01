@@ -1,21 +1,18 @@
-import os
-import math
-from this import s
-
 import pygame
 
 from gui import Text
 from gui.Camera import Camera
 from gui.Office import Office
 from mechanics.BigBug import BigBug
-from mechanics.clock import clock
+from mechanics.Clock import Clock
 from mechanics.OxygenMeter import OxygenMeter
-from mechanics.small_bugs import small_bugs
-from mechanics.spray import spray
+from mechanics.SmallBugs import SmallBugs
+from mechanics.Spray import Spray
 from utils.game_state import camera_state, office_state
 from utils.stateLoader import get_resource_path, stateLoader
-from windows.game_over import game_over
-from windows.night_pass import night_pass
+from windows.GameOver import GameOver
+from windows.NightPass import NightPass
+from windows.JumpscareAnimation import JumpscareAnimation
 
 
 class MainGame:
@@ -29,7 +26,7 @@ class MainGame:
         self.ticks = 0
         self.camera_state: camera_state = camera_state.NONE
         self.office_state = office_state.OFFICE_FRONT
-        self.clock = clock()
+        self.clock = Clock()
         self.door_open: bool = False
         self.window_open: bool = False
         self.lights_on: bool = True
@@ -41,10 +38,10 @@ class MainGame:
         self.last_office_state = None
 
         self.bug_enemy = BigBug("BigBug", camera_state.BATHROOM_HALLWAY, 10)
-        self.spray = spray()
-        self.small_bugs = small_bugs(30, 5)
+        self.spray = Spray()
+        self.small_bugs = SmallBugs(30, 5)
 
-        self.oxygen = OxygenMeter(max_oxygen=100, regen_rate=0.05)
+        self.oxygen = OxygenMeter(100, 0.05, self.HEIGHT)
         self.game_over = False
 
         self.office_image_map = {
@@ -89,26 +86,7 @@ class MainGame:
         self.door_close_sound = pygame.mixer.Sound(
             get_resource_path("/assets/audio/door_close.mp3")
         )
-        self.jumpscare_sound = pygame.mixer.Sound(
-            get_resource_path("/assets/audio/jumpscare_sound.mp3")
-        )
-        unscaled_jmpsc_image = pygame.image.load(
-            get_resource_path("/assets/images/mainmenuanimatronic.png")
-        )
-        scale_factor_bug = self.HEIGHT / 150
-        self.jumpscare_image = pygame.transform.scale(
-            unscaled_jmpsc_image, (unscaled_jmpsc_image.get_width() * scale_factor_bug,
-                                   unscaled_jmpsc_image.get_height() * scale_factor_bug)
-        ).convert_alpha()
-        unscaled_office_background = pygame.image.load(
-            get_resource_path("/assets/images/office_front_lights.jpeg")
-        )
-        self.jumpscare_animation_frames = self.load_jumpscare_animation()
-        scale_factor_office = self.HEIGHT / unscaled_office_background.get_height()
-        new_width = int(unscaled_office_background.get_width() * scale_factor_office)
-        print(str(scale_factor_office) + " " + str(new_width))
-        self.office_background = pygame.transform.scale(unscaled_office_background, (new_width, self.HEIGHT)).convert_alpha()
-
+        self.jumpscare_animation = JumpscareAnimation(self.HEIGHT, self.WIDTH)
 
     def loadingScreen(
         self, screen: pygame.Surface, clock: pygame.time.Clock, new_game: bool = False
@@ -150,7 +128,7 @@ class MainGame:
                 True,
             )
             text.renderText(
-                "Dont let open the window or door too long or you risk and infestation",
+                "Dont leave the window or the door open for too long or you risk an infestation",
                 "white",
                 (
                     self.WIDTH / 2,
@@ -344,51 +322,12 @@ class MainGame:
             if states:
                 self.camera_state = states[0]
 
-    def load_jumpscare_animation(self) -> list[pygame.Surface]:
-        animation_frames = []
-        for i in range(10):
-            animation_frame = pygame.transform.scale(
-                self.jumpscare_image,
-                (self.jumpscare_image.get_width() / (10 - i),
-                 self.jumpscare_image.get_height() / (10 - i))
-            )
-            animation_frames.append(animation_frame)
-        for i in range(15):
-            animation_frame = pygame.transform.rotate(
-                self.jumpscare_image,
-                30 * math.sin(i * 2 * math.pi / 15)
-            )
-            animation_frames.append(animation_frame)
-        return animation_frames
-
-    def jumpscare_animation(self, screen: pygame.Surface):
-        framerate_clock = pygame.time.Clock()
-        self.jumpscare_sound.play()
-        for i in range(10):
-            screen.blit(self.office_background, (0, 0))
-            screen.blit(self.jumpscare_animation_frames[i],
-                        ((self.WIDTH - self.jumpscare_animation_frames[i].get_width()) / 2,
-                         (self.HEIGHT - self.jumpscare_animation_frames[i].get_height() * 0.8) / 2))
-            pygame.display.flip()
-            framerate_clock.tick(60)
-            self.clock.update()
-
-        for j in range(8):
-            for i in range(15):
-                screen.blit(self.office_background, (0, 0))
-                screen.blit(self.jumpscare_animation_frames[i + 10],
-                            ((self.WIDTH - self.jumpscare_animation_frames[i + 10].get_width()) / 2,
-                             (self.HEIGHT - self.jumpscare_animation_frames[i + 10].get_height() * 0.8) / 2))
-                pygame.display.flip()
-                framerate_clock.tick(60)
-                self.clock.update()
-
     def check_game_over(self, screen: pygame.Surface) -> bool:
         if self.bug_enemy.jumpscare:
             pygame.mixer.music.stop()
-            self.jumpscare_animation(screen)
+            self.jumpscare_animation.play(screen)
             if self.spray.current_uses != 0:
-                gm = game_over(
+                gm = GameOver(
                     screen,
                     (self.WIDTH, self.HEIGHT),
                     "If the big bug is near your door",
@@ -396,18 +335,18 @@ class MainGame:
                 )
                 gm.update(screen)
             else:
-                gm = game_over(
+                gm = GameOver(
                     screen,
                     (self.WIDTH, self.HEIGHT),
                     "The spray can has limited uses",
-                    "it should be use in critical moments or restock",
+                    "it should be use in critical moments and restocked when needed",
                 )
                 gm.update(screen)
             return True
         if self.oxygen.current_oxygen <= 0:
-            self.jumpscare_animation(screen)
+            self.jumpscare_animation.play(screen)
             pygame.mixer.music.stop()
-            gm = game_over(
+            gm = GameOver(
                 screen,
                 (self.WIDTH, self.HEIGHT),
                 "You suffocated from using too much spray",
@@ -416,13 +355,13 @@ class MainGame:
             gm.update(screen)
             return True
         if self.small_bugs.check_limit():
-            self.jumpscare_animation(screen)
+            self.jumpscare_animation.play(screen)
             pygame.mixer.music.stop()
-            gm = game_over(
+            gm = GameOver(
                 screen,
                 (self.WIDTH, self.HEIGHT),
                 "Too many bugs entered your room",
-                "dont let open doors or windows next time",
+                "don't leave open doors or windows next time",
             )
             gm.update(screen)
             return True
@@ -432,7 +371,7 @@ class MainGame:
         if self.clock.get_minutes() == 6:
             pygame.mixer.music.stop()
             stateLoader.advance_night(self.loaded_state)
-            np = night_pass(screen, (self.WIDTH, self.HEIGHT))
+            np = NightPass(screen, (self.WIDTH, self.HEIGHT))
             np.update(screen)
             return True
         return False
@@ -469,34 +408,34 @@ class MainGame:
             clock_text.renderText(
                 self.clock.get_hour_text() + " AM",
                 "white",
-                (self.WIDTH - 100, 40),
+                (self.WIDTH * 19 / 20, self.HEIGHT * 1 / 20),
                 True,
             )
 
             # small bugs meter
-            small_bugs_text = Text.Text(screen, fontSize=30)
+            small_bugs_text = Text.Text(screen, fontSize=50)
             small_bugs_text.renderText(
                 "Bugs in room "
                 + str(self.small_bugs.current_bugs)
                 + "/"
                 + str(self.small_bugs.limit),
                 "white",
-                (20, self.HEIGHT - 130),
+                (self.WIDTH * 1 / 40, self.HEIGHT * 34 / 40),
             )
 
             # Oxygen meter
-            oxygen_meter_text = Text.Text(screen, fontSize=30)
+            oxygen_meter_text = Text.Text(screen, fontSize=60)
             oxygen_meter_text.renderText(
-                "Oxygen Meter:", "white", (20, self.HEIGHT - 70)
+                "Oxygen Meter:", "white", (self.WIDTH * 1 / 40, self.HEIGHT * 36 / 40)
             )
-            self.oxygen.render_bar(screen, 10, self.HEIGHT - 40)
+            self.oxygen.render_bar(screen, self.WIDTH * 1 / 40, self.HEIGHT * 37.2 / 40)
 
             # Spray uses
-            spray_uses_text = Text.Text(screen, fontSize=30)
+            spray_uses_text = Text.Text(screen, fontSize=50)
             spray_count = self.spray.current_uses
             color = "white" if spray_count > 0 else "red"
             spray_uses_text.renderText(
-                "Spray: " + str(spray_count), color, (20, self.HEIGHT - 100)
+                "Spray: " + str(spray_count), color, (self.WIDTH * 1 / 40, self.HEIGHT * 35 / 40)
             )
         if self.is_restocking:
             self.camera.restock_spray_button.set_text(

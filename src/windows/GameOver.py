@@ -1,11 +1,11 @@
 import pygame
 
 from gui.Text import Text
-from mechanics.clock import clock
+from mechanics.Clock import Clock
 from utils.stateLoader import get_resource_path
 
 
-class game_over:
+class GameOver:
     def __init__(
         self,
         screen: pygame.Surface,
@@ -24,7 +24,7 @@ class game_over:
             self.background, self.screen_dimensions
         )
 
-        self.clock = clock()
+        self.clock = Clock()
         self.message = message
         self.tip = tip
 

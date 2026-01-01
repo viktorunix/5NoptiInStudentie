@@ -2,15 +2,15 @@ import cv2
 import pygame
 
 from gui.Text import Text
-from mechanics.clock import clock
+from mechanics.Clock import Clock
 from utils.stateLoader import get_resource_path
 
 
-class night_pass:
+class NightPass:
     def __init__(self, screen: pygame.Surface, screen_dimensions: tuple):
         print("night pass lol what do you expect")
         self.screen_dimensions = screen_dimensions
-        self.clock = clock()
+        self.clock = Clock()
         self.sound = pygame.mixer.Sound(
             get_resource_path("/assets/audio/night_pass.mp3")
         )

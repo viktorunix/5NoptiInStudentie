@@ -7,7 +7,7 @@ from pygame.time import Clock
 
 from gui import Text
 from gui.Button import Button
-from gui.video_background import VideoBackground
+from gui.VideoBackground import VideoBackground
 from utils.stateLoader import get_resource_path
 from windows.MainGame import MainGame
 
