@@ -42,5 +42,8 @@ class Spray:
         if self.restock_timer >= self.restock_max:
             self.restock_timer = 0
             self.current_uses = self.max_uses
+            self.restock_max += (
+                60 * 5
+            )  # every restock would increase the timer by 5 seconds
             return False
         return True

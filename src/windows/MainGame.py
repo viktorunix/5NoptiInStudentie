@@ -1,4 +1,5 @@
 import pygame
+from cv2 import DISOPTICAL_FLOW_PRESET_ULTRAFAST
 
 from gui import Text
 from gui.Camera import Camera
@@ -8,11 +9,12 @@ from mechanics.Clock import Clock
 from mechanics.OxygenMeter import OxygenMeter
 from mechanics.SmallBugs import SmallBugs
 from mechanics.Spray import Spray
+from utils.Difficulty import Difficulty
 from utils.game_state import camera_state, office_state
 from utils.stateLoader import get_resource_path, stateLoader
 from windows.GameOver import GameOver
-from windows.NightPass import NightPass
 from windows.JumpscareAnimation import JumpscareAnimation
+from windows.NightPass import NightPass
 
 
 class MainGame:
@@ -97,6 +99,7 @@ class MainGame:
             self.loaded_state = stateLoader.load_state()
         else:
             self.loaded_state = stateLoader.new_state()
+
         while not loaded:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -112,6 +115,7 @@ class MainGame:
                 (self.WIDTH / 2, self.HEIGHT / 3),
                 True,
             )
+
             text = Text.Text(screen)
             text.renderText(
                 "Dont let bugs in your room, especially the big one",
@@ -149,6 +153,13 @@ class MainGame:
             pygame.display.flip()
             clock.tick(60)
             self.ticks += 1
+        df = Difficulty()
+        self.bug_enemy.ai_level = df.bug_ai[int(self.loaded_state["night"]) - 1]
+        self.spray.max_uses = df.spray_uses[int(self.loaded_state["night"]) - 1]
+        self.spray.current_uses = self.spray.max_uses
+        self.small_bugs.move_interval = df.spray_uses[
+            int(self.loaded_state["night"]) - 1
+        ]
         self.main_game(screen)
 
     def camera_event_handler(self, event):
@@ -436,7 +447,9 @@ class MainGame:
             spray_count = self.spray.current_uses
             color = "white" if spray_count > 0 else "red"
             spray_uses_text.renderText(
-                "Spray: " + str(spray_count), color, (self.WIDTH * 1 / 40, self.HEIGHT * 35 / 40)
+                "Spray: " + str(spray_count),
+                color,
+                (self.WIDTH * 1 / 40, self.HEIGHT * 35 / 40),
             )
         if self.is_restocking:
             self.camera.restock_spray_button.set_text(

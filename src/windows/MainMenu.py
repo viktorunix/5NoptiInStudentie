@@ -197,9 +197,9 @@ class MainMenu:
             )
 
             screen.blit(self.bugimage, (self.WIDTH / 2, -self.HEIGHT / 10))
-
+            self.renderButtons(screen)
             text.renderText(
-                "BETA 3",
+                "Release 1.0",
                 pygame.Color("white"),
                 (self.WIDTH * 23 / 25, self.HEIGHT * 24 / 25),
                 True,
