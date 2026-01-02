@@ -39,6 +39,8 @@ class stateLoader:
     @staticmethod
     def advance_night(loaded_state: dict):
         loaded_state["night"] = str(int(loaded_state["night"]) + 1)
+        if int(loaded_state["night"]) >= 5:
+            loaded_state["night"] = "5"
         dir: str = os.path.dirname(os.path.abspath(__file__))
         dir = dir[:-10]
         with open(get_resource_path("/state/save.data"), "w+") as file:

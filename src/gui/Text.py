@@ -14,7 +14,6 @@ class Text:
         screen_width = pygame.display.Info()
         scale_factor = screen_width.current_w / aux_width
         # scale_factor = scale_factor if scale_factor < 1 else 1 / scale_factor
-        print(f"screen width {screen_width.current_w}, scale factor: {scale_factor}")
         fontSize = int(fontSize * scale_factor)
         self.font = pygame.font.Font(fontPath, fontSize)
         self.fontSize = fontSize
